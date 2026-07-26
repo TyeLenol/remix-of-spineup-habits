@@ -1,12 +1,9 @@
-import { motion } from "motion/react";
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { motion, type HTMLMotionProps } from "motion/react";
+import { forwardRef, type ReactNode } from "react";
 
 type Tone = "surface" | "sage" | "coral" | "lavender";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  tone?: Tone;
-  children: ReactNode;
-};
+type Props = Omit<HTMLMotionProps<"button">, "ref"> & { tone?: Tone; children: ReactNode };
 
 const TONES: Record<Tone, { fill: string; ink: string; text: string }> = {
   surface: { fill: "var(--warm-surface-high)", ink: "var(--warm-ink)", text: "var(--warm-ink)" },
