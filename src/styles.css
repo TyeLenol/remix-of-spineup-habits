@@ -4,20 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -59,6 +45,26 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* SpineUp M3 Expressive role colors */
+  --color-sage: var(--sage);
+  --color-sage-ink: var(--sage-ink);
+  --color-sage-container: var(--sage-container);
+  --color-on-sage: var(--on-sage);
+  --color-coral: var(--coral);
+  --color-coral-ink: var(--coral-ink);
+  --color-coral-container: var(--coral-container);
+  --color-on-coral: var(--on-coral);
+  --color-lavender: var(--lavender);
+  --color-lavender-ink: var(--lavender-ink);
+  --color-lavender-container: var(--lavender-container);
+  --color-on-lavender: var(--on-lavender);
+  --color-warm-bg: var(--warm-bg);
+  --color-warm-surface: var(--warm-surface);
+  --color-warm-surface-high: var(--warm-surface-high);
+  --color-warm-ink: var(--warm-ink);
+  --color-warm-ink-muted: var(--warm-ink-muted);
+  --color-outline: var(--md-outline);
+  --color-outline-variant: var(--md-outline-variant);
 }
 
 :root {
@@ -95,6 +101,30 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* SpineUp M3 Expressive tokens (light) */
+  --sage: oklch(0.78 0.11 168);
+  --sage-ink: oklch(0.52 0.10 168);
+  --sage-container: oklch(0.90 0.06 168);
+  --on-sage: oklch(0.18 0.03 168);
+  --coral: oklch(0.68 0.20 32);
+  --coral-ink: oklch(0.48 0.18 32);
+  --coral-container: oklch(0.90 0.06 32);
+  --on-coral: oklch(0.99 0.01 32);
+  --lavender: oklch(0.70 0.14 285);
+  --lavender-ink: oklch(0.48 0.15 285);
+  --lavender-container: oklch(0.90 0.05 285);
+  --on-lavender: oklch(0.99 0.005 285);
+  --warm-bg: oklch(0.96 0.015 75);
+  --warm-surface: oklch(0.93 0.02 60);
+  --warm-surface-high: oklch(0.89 0.025 55);
+  --warm-ink: oklch(0.20 0.02 60);
+  --warm-ink-muted: oklch(0.42 0.02 60);
+  --md-outline: oklch(0.55 0.02 60);
+  --md-outline-variant: oklch(0.82 0.015 60);
+  --md-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-easing-emphasized-decel: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-easing-emphasized-accel: cubic-bezier(0.3, 0, 0.8, 0.15);
 }
 
 .dark {
@@ -130,6 +160,26 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+
+  --sage: oklch(0.82 0.13 168);
+  --sage-ink: oklch(0.55 0.11 168);
+  --sage-container: oklch(0.35 0.08 168);
+  --on-sage: oklch(0.15 0.02 168);
+  --coral: oklch(0.74 0.22 32);
+  --coral-ink: oklch(0.48 0.18 32);
+  --coral-container: oklch(0.35 0.12 32);
+  --on-coral: oklch(0.15 0.02 32);
+  --lavender: oklch(0.76 0.16 285);
+  --lavender-ink: oklch(0.50 0.15 285);
+  --lavender-container: oklch(0.32 0.10 285);
+  --on-lavender: oklch(0.15 0.02 285);
+  --warm-bg: oklch(0.20 0.015 60);
+  --warm-surface: oklch(0.26 0.02 60);
+  --warm-surface-high: oklch(0.32 0.02 60);
+  --warm-ink: oklch(0.96 0.01 60);
+  --warm-ink-muted: oklch(0.75 0.02 60);
+  --md-outline: oklch(0.65 0.02 60);
+  --md-outline-variant: oklch(0.38 0.02 60);
 }
 
 @layer base {
