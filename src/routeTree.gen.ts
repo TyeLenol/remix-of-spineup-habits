@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
+import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
+import { Route as ProfileSetupStepRouteImport } from './routes/profile.setup.$step'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -23,39 +26,81 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileSetupRoute = ProfileSetupRouteImport.update({
+  id: '/profile/setup',
+  path: '/profile/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingStepRoute = OnboardingStepRouteImport.update({
   id: '/$step',
   path: '/$step',
   getParentRoute: () => OnboardingRoute,
+} as any)
+const ProfileSetupIndexRoute = ProfileSetupIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileSetupRoute,
+} as any)
+const ProfileSetupStepRoute = ProfileSetupStepRouteImport.update({
+  id: '/$step',
+  path: '/$step',
+  getParentRoute: () => ProfileSetupRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/profile/setup/$step': typeof ProfileSetupStepRoute
+  '/profile/setup/': typeof ProfileSetupIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/profile/setup/$step': typeof ProfileSetupStepRoute
+  '/profile/setup': typeof ProfileSetupIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/profile/setup/$step': typeof ProfileSetupStepRoute
+  '/profile/setup/': typeof ProfileSetupIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/onboarding' | '/onboarding/$step'
+  fullPaths:
+    | '/'
+    | '/onboarding'
+    | '/onboarding/$step'
+    | '/profile/setup'
+    | '/profile/setup/$step'
+    | '/profile/setup/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/onboarding' | '/onboarding/$step'
-  id: '__root__' | '/' | '/onboarding' | '/onboarding/$step'
+  to:
+    | '/'
+    | '/onboarding'
+    | '/onboarding/$step'
+    | '/profile/setup/$step'
+    | '/profile/setup'
+  id:
+    | '__root__'
+    | '/'
+    | '/onboarding'
+    | '/onboarding/$step'
+    | '/profile/setup'
+    | '/profile/setup/$step'
+    | '/profile/setup/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
+  ProfileSetupRoute: typeof ProfileSetupRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -74,12 +119,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/setup': {
+      id: '/profile/setup'
+      path: '/profile/setup'
+      fullPath: '/profile/setup'
+      preLoaderRoute: typeof ProfileSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/$step': {
       id: '/onboarding/$step'
       path: '/$step'
       fullPath: '/onboarding/$step'
       preLoaderRoute: typeof OnboardingStepRouteImport
       parentRoute: typeof OnboardingRoute
+    }
+    '/profile/setup/': {
+      id: '/profile/setup/'
+      path: '/'
+      fullPath: '/profile/setup/'
+      preLoaderRoute: typeof ProfileSetupIndexRouteImport
+      parentRoute: typeof ProfileSetupRoute
+    }
+    '/profile/setup/$step': {
+      id: '/profile/setup/$step'
+      path: '/$step'
+      fullPath: '/profile/setup/$step'
+      preLoaderRoute: typeof ProfileSetupStepRouteImport
+      parentRoute: typeof ProfileSetupRoute
     }
   }
 }
@@ -96,9 +162,24 @@ const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
   OnboardingRouteChildren,
 )
 
+interface ProfileSetupRouteChildren {
+  ProfileSetupStepRoute: typeof ProfileSetupStepRoute
+  ProfileSetupIndexRoute: typeof ProfileSetupIndexRoute
+}
+
+const ProfileSetupRouteChildren: ProfileSetupRouteChildren = {
+  ProfileSetupStepRoute: ProfileSetupStepRoute,
+  ProfileSetupIndexRoute: ProfileSetupIndexRoute,
+}
+
+const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
+  ProfileSetupRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
+  ProfileSetupRoute: ProfileSetupRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
