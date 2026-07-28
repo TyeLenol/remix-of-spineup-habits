@@ -4,7 +4,7 @@
 
 export const N = 72;
 
-export type ShapeName = "blob" | "ring" | "burst" | "shield";
+export type ShapeName = "blob" | "ring" | "burst" | "cluster" | "shield";
 
 const TAU = Math.PI * 2;
 
@@ -21,20 +21,27 @@ function radiusFor(shape: ShapeName, a: number): number {
       const sharp = Math.sign(t) * Math.pow(Math.abs(t), 0.55);
       return 0.72 + 0.34 * sharp;
     }
+    case "cluster": {
+      // 5-lobe rosette: reads as a small group of connected people
+      const lobes = 5;
+      const t = Math.cos(lobes * (a + Math.PI / 2));
+      const soft = Math.sign(t) * Math.pow(Math.abs(t), 0.85);
+      return 0.86 + 0.2 * soft;
+    }
     case "shield": {
       const down = Math.max(0, Math.sin(a)); // y-down: bottom of the shape
-      const taper = 1 - 0.42 * Math.pow(down, 1.5);
-      const shoulder = 1 - 0.30 * Math.pow(down, 1.2) * Math.abs(Math.cos(a));
-      const crown = 1 + 0.05 * Math.pow(Math.max(0, -Math.sin(a)), 2);
-      return taper * shoulder * crown;
+      // narrow the flanks toward the bottom so the silhouette comes to a point
+      const flank = 1 - 0.58 * Math.pow(down, 0.85) * Math.pow(Math.abs(Math.cos(a)), 0.8);
+      const crown = 1 + 0.07 * Math.pow(Math.max(0, -Math.sin(a)), 2);
+      return flank * crown;
     }
   }
 }
 
 // hole size (as a fraction of the outer radius) per shape
-const INNER: Record<ShapeName, number> = { blob: 0, ring: 0.62, burst: 0.26, shield: 0 };
+const INNER: Record<ShapeName, number> = { blob: 0, ring: 0.62, burst: 0.26, cluster: 0.34, shield: 0 };
 
-export const SHAPES: ShapeName[] = ["blob", "ring", "burst", "shield"];
+export const SHAPES: ShapeName[] = ["blob", "ring", "burst", "cluster", "shield"];
 
 export const RADII: Record<ShapeName, number[]> = Object.fromEntries(
   SHAPES.map((s) => [
@@ -158,4 +165,27 @@ export function flatArcPath(start: number, end: number, cx = 100, cy = 100, R = 
   const a1 = -Math.PI / 2 + end * TAU;
   const large = end - start > 0.5 ? 1 : 0;
   return `M ${(cx + Math.cos(a0) * R).toFixed(3)} ${(cy + Math.sin(a0) * R).toFixed(3)} A ${R} ${R} 0 ${large} 1 ${(cx + Math.cos(a1) * R).toFixed(3)} ${(cy + Math.sin(a1) * R).toFixed(3)}`;
+}
+
+/** Evenly spaced satellite node positions used by the community screen. */
+export function clusterNodes(count = 5, cx = 100, cy = 100, R = 60) {
+  return Array.from({ length: count }, (_, i) => {
+    const a = -Math.PI / 2 + (i / count) * TAU;
+    return { x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R };
+  });
+}
+
+/** Chords connecting every pair of cluster nodes. */
+export function clusterLinks(count = 5, cx = 100, cy = 100, R = 60) {
+  const pts = clusterNodes(count, cx, cy, R);
+  const out: Array<{ d: string; key: string }> = [];
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      out.push({
+        key: `${i}-${j}`,
+        d: `M ${pts[i].x.toFixed(2)} ${pts[i].y.toFixed(2)} L ${pts[j].x.toFixed(2)} ${pts[j].y.toFixed(2)}`,
+      });
+    }
+  }
+  return out;
 }

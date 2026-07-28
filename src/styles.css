@@ -150,7 +150,16 @@
   --ob-coral-tint: #fdeee7;
   --ob-coral-tint-soft: #f5c6ae;
   --ob-coral-ink-deep: #5c2210;
+
+  --ob-azure-bg: #10556c;
+  --ob-azure-edge: #082f3e;
+  --ob-azure-shape: #1c7592;
+  --ob-azure-accent: #7fcbe4;
+  --ob-azure-tint: #e6f5fa;
+  --ob-azure-tint-soft: #b9e2f0;
+  --ob-azure-ink-deep: #052430;
 }
+
 
 .dark {
   --ob-sage-bg: #0a4a3a;
@@ -176,7 +185,16 @@
   --ob-coral-tint: #fbe7de;
   --ob-coral-tint-soft: #eeb497;
   --ob-coral-ink-deep: #3a1408;
+
+  --ob-azure-bg: #0b3d4e;
+  --ob-azure-edge: #04212b;
+  --ob-azure-shape: #135a72;
+  --ob-azure-accent: #6ab7d2;
+  --ob-azure-tint: #ddeff6;
+  --ob-azure-tint-soft: #9dcfe4;
+  --ob-azure-ink-deep: #031b23;
 }
+
 
 
 .dark {

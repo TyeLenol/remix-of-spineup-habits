@@ -11,6 +11,8 @@ import {
   StepAnnouncer,
 } from "@/components/onboarding/OnboardingChrome";
 
+const TOTAL = 5;
+
 type Screen = {
   bg: string;
   edge: string;
@@ -23,6 +25,7 @@ type Screen = {
   subtext: string;
   cta: string;
   overshoot: boolean;
+  chips?: string[];
 };
 
 const SCREENS: Screen[] = [
@@ -35,7 +38,8 @@ const SCREENS: Screen[] = [
     tintSoft: "var(--ob-sage-tint-soft)",
     deep: "var(--ob-sage-ink-deep)",
     headline: ["Your spine has a story.", "Let's track it."],
-    subtext: "Log brace time and exercises daily, and watch the picture of your curve come together.",
+    subtext:
+      "Log brace time and exercises daily, and watch the picture of your curve come together.",
     cta: "Next",
     overshoot: false,
   },
@@ -66,6 +70,20 @@ const SCREENS: Screen[] = [
     overshoot: true,
   },
   {
+    bg: "var(--ob-azure-bg)",
+    edge: "var(--ob-azure-edge)",
+    shape: "var(--ob-azure-shape)",
+    accent: "var(--ob-azure-accent)",
+    tint: "var(--ob-azure-tint)",
+    tintSoft: "var(--ob-azure-tint-soft)",
+    deep: "var(--ob-azure-ink-deep)",
+    headline: ["You're not doing", "this alone."],
+    subtext:
+      "Follow others managing scoliosis, swap what actually helps, and cheer each other's streaks on.",
+    cta: "Next",
+    overshoot: true,
+  },
+  {
     bg: "var(--ob-lav-bg)",
     edge: "var(--ob-lav-edge)",
     shape: "var(--ob-lav-shape)",
@@ -74,10 +92,14 @@ const SCREENS: Screen[] = [
     tintSoft: "var(--ob-lav-tint-soft)",
     deep: "var(--ob-lav-ink-deep)",
     headline: ["Your data", "stays yours."],
-    subtext:
-      "Your entries are stored locally on this device. We never sell or share them, and you can delete everything at any time from Settings.",
+    subtext: "Three promises we keep by design, not by policy.",
     cta: "Get started",
     overshoot: false,
+    chips: [
+      "Stored on this device",
+      "Never sold or shared",
+      "Deletable anytime in Settings",
+    ],
   },
 ];
 
@@ -97,6 +119,10 @@ export const Route = createFileRoute("/onboarding/$step")({
         d: "Earn XP, build streaks, and get rewarded for real scoliosis-care actions.",
       },
       "4": {
+        t: "You're not doing this alone — SpineUp community",
+        d: "Connect with other people managing scoliosis, share what works, and keep each other going.",
+      },
+      "5": {
         t: "Your data stays yours — SpineUp",
         d: "SpineUp stores your data on your device, never sells it, and lets you delete it anytime.",
       },
@@ -115,7 +141,7 @@ export const Route = createFileRoute("/onboarding/$step")({
   },
   loader: ({ params }) => {
     const n = Number(params.step);
-    if (!Number.isFinite(n) || n < 1 || n > 4) throw notFound();
+    if (!Number.isFinite(n) || n < 1 || n > TOTAL) throw notFound();
     return { n };
   },
   component: StepPage,
@@ -128,8 +154,9 @@ function StepPage() {
   const s = SCREENS[n - 1];
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const go = (step: number) => navigate({ to: "/onboarding/$step", params: { step: String(step) } });
-  const next = () => (n < 4 ? go(n + 1) : navigate({ to: "/profile/setup" }));
+  const go = (step: number) =>
+    navigate({ to: "/onboarding/$step", params: { step: String(step) } });
+  const next = () => (n < TOTAL ? go(n + 1) : navigate({ to: "/profile/setup" }));
   const skip = () => navigate({ to: "/profile/setup" });
 
   // Move focus to the new heading so keyboard and screen-reader users land in context.
@@ -137,17 +164,26 @@ function StepPage() {
     headingRef.current?.focus({ preventScroll: true });
   }, [n]);
 
-  // Arrow-key navigation between steps.
+  // Arrow-key navigation between steps, skipped when a control owns the key.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
       const el = e.target as HTMLElement | null;
-      if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
-      if (e.key === "ArrowRight" && n < 4) go(n + 1);
+      if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      if (el?.closest('[role="slider"],[role="tablist"],[role="listbox"],[role="menu"]')) return;
+      if (e.key === "ArrowRight" && n < TOTAL) go(n + 1);
       if (e.key === "ArrowLeft" && n > 1) go(n - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, [n]);
+
+  const enter = (delay: number) =>
+    reduced
+      ? { duration: 0.4, ease: "easeOut" as const, delay: 0 }
+      : { type: "spring" as const, stiffness: 240, damping: 24, delay };
+
+  const rise = reduced ? { opacity: 0 } : { opacity: 0, y: 14 };
 
   return (
     <div
@@ -158,7 +194,7 @@ function StepPage() {
       }}
     >
       <StepAnnouncer
-        message={`Step ${n} of 4. ${s.headline[0]} ${s.headline[1]} ${s.subtext}`}
+        message={`Step ${n} of ${TOTAL}. ${s.headline[0]} ${s.headline[1]} ${s.subtext}`}
       />
 
       <header className="relative z-10 flex items-center justify-between px-5 pt-[max(env(safe-area-inset-top),1rem)]">
@@ -169,7 +205,7 @@ function StepPage() {
             <span className="block h-12 w-12" />
           )}
         </div>
-        <ProgressDots step={n} tint={s.tint} />
+        <ProgressDots step={n} total={TOTAL} tint={s.tint} />
         <div className="flex min-w-12 justify-end">
           {n > 1 ? (
             <SmallLink onClick={skip} tint={s.tint} ariaLabel="Skip onboarding">
@@ -206,6 +242,9 @@ function StepPage() {
                 accent={s.accent}
                 overshoot={s.overshoot}
                 progress={n === 2 ? 0.7 : undefined}
+                nodes={n === 4}
+                layered={n === 5}
+                size={n === 5 ? 232 : 300}
               />
             )}
             {n === 3 && (
@@ -216,19 +255,13 @@ function StepPage() {
           </div>
         </div>
 
-        <motion.div
-          className="w-full max-w-sm"
-          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            reduced
-              ? { duration: 0.4, ease: "easeOut" }
-              : { type: "spring", stiffness: 220, damping: 22, delay: 0.08 }
-          }
-        >
-          <h1
+        <div className="w-full max-w-sm">
+          <motion.h1
             ref={headingRef}
             tabIndex={-1}
+            initial={rise}
+            animate={{ opacity: 1, y: 0 }}
+            transition={enter(0.06)}
             className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight outline-offset-4 focus-visible:outline-2"
             style={{ outlineColor: `color-mix(in oklab, ${s.tint} 55%, transparent)` }}
           >
@@ -236,16 +269,47 @@ function StepPage() {
             <span className="block text-[2rem] font-bold italic" style={{ color: s.tintSoft }}>
               {s.headline[1]}
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="mt-4 text-sm leading-relaxed" style={{ color: s.tintSoft }}>
+          <motion.p
+            initial={rise}
+            animate={{ opacity: 1, y: 0 }}
+            transition={enter(0.14)}
+            className="mt-4 text-sm leading-relaxed"
+            style={{ color: s.tintSoft }}
+          >
             {s.subtext}
-          </p>
+          </motion.p>
 
-          <div className="mt-8 flex justify-center pb-2">
+          {s.chips && (
+            <ul className="mt-4 flex flex-col gap-2">
+              {s.chips.map((chip, i) => (
+                <motion.li
+                  key={chip}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={enter(0.2 + i * 0.07)}
+                  className="inline-flex w-fit items-center rounded-full px-3 py-1.5 text-sm font-semibold"
+                  style={{
+                    color: s.tint,
+                    background: `color-mix(in oklab, ${s.tint} 16%, transparent)`,
+                  }}
+                >
+                  {chip}
+                </motion.li>
+              ))}
+            </ul>
+          )}
+
+          <motion.div
+            initial={rise}
+            animate={{ opacity: 1, y: 0 }}
+            transition={enter(0.24)}
+            className="mt-8 flex justify-center pb-2"
+          >
             <KeycapCta label={s.cta} onClick={next} fill={s.tint} ink={s.deep} text={s.edge} />
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </main>
     </div>
   );
