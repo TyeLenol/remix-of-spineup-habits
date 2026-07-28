@@ -9,13 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TodayIndexRouteImport } from './routes/today.index'
+import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
 import { Route as ProfileSetupStepRouteImport } from './routes/profile.setup.$step'
 
+const TodayRoute = TodayRouteImport.update({
+  id: '/today',
+  path: '/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -25,6 +33,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TodayIndexRoute = TodayIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TodayRoute,
+} as any)
+const TodayCheckInRoute = TodayCheckInRouteImport.update({
+  id: '/check-in',
+  path: '/check-in',
+  getParentRoute: () => TodayRoute,
 } as any)
 const ProfileSetupRoute = ProfileSetupRouteImport.update({
   id: '/profile/setup',
@@ -50,8 +68,11 @@ const ProfileSetupStepRoute = ProfileSetupStepRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/today': typeof TodayRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/today/check-in': typeof TodayCheckInRoute
+  '/today/': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
 }
@@ -59,6 +80,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/today/check-in': typeof TodayCheckInRoute
+  '/today': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup': typeof ProfileSetupIndexRoute
 }
@@ -66,8 +89,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/today': typeof TodayRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/today/check-in': typeof TodayCheckInRoute
+  '/today/': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
 }
@@ -76,8 +102,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/onboarding'
+    | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
+    | '/today/check-in'
+    | '/today/'
     | '/profile/setup/$step'
     | '/profile/setup/'
   fileRoutesByTo: FileRoutesByTo
@@ -85,14 +114,19 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding'
     | '/onboarding/$step'
+    | '/today/check-in'
+    | '/today'
     | '/profile/setup/$step'
     | '/profile/setup'
   id:
     | '__root__'
     | '/'
     | '/onboarding'
+    | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
+    | '/today/check-in'
+    | '/today/'
     | '/profile/setup/$step'
     | '/profile/setup/'
   fileRoutesById: FileRoutesById
@@ -100,11 +134,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
+  TodayRoute: typeof TodayRouteWithChildren
   ProfileSetupRoute: typeof ProfileSetupRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/today': {
+      id: '/today'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof TodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -118,6 +160,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/today/': {
+      id: '/today/'
+      path: '/'
+      fullPath: '/today/'
+      preLoaderRoute: typeof TodayIndexRouteImport
+      parentRoute: typeof TodayRoute
+    }
+    '/today/check-in': {
+      id: '/today/check-in'
+      path: '/check-in'
+      fullPath: '/today/check-in'
+      preLoaderRoute: typeof TodayCheckInRouteImport
+      parentRoute: typeof TodayRoute
     }
     '/profile/setup': {
       id: '/profile/setup'
@@ -162,6 +218,18 @@ const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
   OnboardingRouteChildren,
 )
 
+interface TodayRouteChildren {
+  TodayCheckInRoute: typeof TodayCheckInRoute
+  TodayIndexRoute: typeof TodayIndexRoute
+}
+
+const TodayRouteChildren: TodayRouteChildren = {
+  TodayCheckInRoute: TodayCheckInRoute,
+  TodayIndexRoute: TodayIndexRoute,
+}
+
+const TodayRouteWithChildren = TodayRoute._addFileChildren(TodayRouteChildren)
+
 interface ProfileSetupRouteChildren {
   ProfileSetupStepRoute: typeof ProfileSetupStepRoute
   ProfileSetupIndexRoute: typeof ProfileSetupIndexRoute
@@ -179,18 +247,9 @@ const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
+  TodayRoute: TodayRouteWithChildren,
   ProfileSetupRoute: ProfileSetupRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
