@@ -125,7 +125,59 @@
   --md-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
   --md-easing-emphasized-decel: cubic-bezier(0.05, 0.7, 0.1, 1);
   --md-easing-emphasized-accel: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* Onboarding screen palettes (single-hue per screen) */
+  --ob-sage-bg: #0f6e56;
+  --ob-sage-edge: #04342c;
+  --ob-sage-shape: #2f8f74;
+  --ob-sage-accent: #7fd3b6;
+  --ob-sage-tint: #e8f7f1;
+  --ob-sage-tint-soft: #b6e4d3;
+  --ob-sage-ink-deep: #04342c;
+
+  --ob-lav-bg: #3c3489;
+  --ob-lav-edge: #26215c;
+  --ob-lav-shape: #5a51b0;
+  --ob-lav-accent: #a79ff0;
+  --ob-lav-tint: #eeecfb;
+  --ob-lav-tint-soft: #c5bff2;
+  --ob-lav-ink-deep: #221d55;
+
+  --ob-coral-bg: #993c1d;
+  --ob-coral-edge: #712b13;
+  --ob-coral-shape: #bf5730;
+  --ob-coral-accent: #f0a181;
+  --ob-coral-tint: #fdeee7;
+  --ob-coral-tint-soft: #f5c6ae;
+  --ob-coral-ink-deep: #5c2210;
 }
+
+.dark {
+  --ob-sage-bg: #0a4a3a;
+  --ob-sage-edge: #02211c;
+  --ob-sage-shape: #14705a;
+  --ob-sage-accent: #6cc2a5;
+  --ob-sage-tint: #dff2ea;
+  --ob-sage-tint-soft: #9ed4bf;
+  --ob-sage-ink-deep: #021d18;
+
+  --ob-lav-bg: #29236a;
+  --ob-lav-edge: #16123c;
+  --ob-lav-shape: #3d368f;
+  --ob-lav-accent: #9b93e6;
+  --ob-lav-tint: #eae8f8;
+  --ob-lav-tint-soft: #b4ace9;
+  --ob-lav-ink-deep: #13103a;
+
+  --ob-coral-bg: #6d2a14;
+  --ob-coral-edge: #48190a;
+  --ob-coral-shape: #8f4222;
+  --ob-coral-accent: #e08a66;
+  --ob-coral-tint: #fbe7de;
+  --ob-coral-tint-soft: #eeb497;
+  --ob-coral-ink-deep: #3a1408;
+}
+
 
 .dark {
   --background: oklch(0.129 0.042 264.695);
