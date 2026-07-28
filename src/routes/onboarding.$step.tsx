@@ -1,19 +1,91 @@
 import { createFileRoute, useNavigate, notFound } from "@tanstack/react-router";
-import { motion } from "motion/react";
-import { LivingBackground } from "@/components/onboarding/LivingBackground";
-import { OnboardingTopBar } from "@/components/onboarding/OnboardingTopBar";
-import { Spry } from "@/components/onboarding/Spry";
-import { ChargeHoldButton } from "@/components/onboarding/ChargeHoldButton";
-import { DragPillar } from "@/components/onboarding/DragPillar";
-import { ArcadeSmash } from "@/components/onboarding/ArcadeSmash";
+import { motion, useReducedMotion } from "motion/react";
+import { MorphShape, Breathing, CountUp } from "@/components/onboarding/MorphShape";
+import { ProgressDots, KeycapCta, SmallLink } from "@/components/onboarding/OnboardingChrome";
+
+type Screen = {
+  bg: string;
+  edge: string;
+  shape: string;
+  accent: string;
+  tint: string;
+  tintSoft: string;
+  deep: string;
+  headline: [string, string];
+  cta: string;
+  overshoot: boolean;
+};
+
+const SCREENS: Screen[] = [
+  {
+    bg: "var(--ob-sage-bg)",
+    edge: "var(--ob-sage-edge)",
+    shape: "var(--ob-sage-shape)",
+    accent: "var(--ob-sage-accent)",
+    tint: "var(--ob-sage-tint)",
+    tintSoft: "var(--ob-sage-tint-soft)",
+    deep: "var(--ob-sage-ink-deep)",
+    headline: ["Your spine has a story.", "Let's track it."],
+    cta: "Next",
+    overshoot: false,
+  },
+  {
+    bg: "var(--ob-lav-bg)",
+    edge: "var(--ob-lav-edge)",
+    shape: "var(--ob-lav-shape)",
+    accent: "var(--ob-lav-accent)",
+    tint: "var(--ob-lav-tint)",
+    tintSoft: "var(--ob-lav-tint-soft)",
+    deep: "var(--ob-lav-ink-deep)",
+    headline: ["Every stretch counts", "toward something."],
+    cta: "Next",
+    overshoot: true,
+  },
+  {
+    bg: "var(--ob-coral-bg)",
+    edge: "var(--ob-coral-edge)",
+    shape: "var(--ob-coral-shape)",
+    accent: "var(--ob-coral-accent)",
+    tint: "var(--ob-coral-tint)",
+    tintSoft: "var(--ob-coral-tint-soft)",
+    deep: "var(--ob-coral-ink-deep)",
+    headline: ["Show up,", "level up."],
+    cta: "Next",
+    overshoot: true,
+  },
+  {
+    bg: "var(--ob-lav-bg)",
+    edge: "var(--ob-lav-edge)",
+    shape: "var(--ob-lav-shape)",
+    accent: "var(--ob-lav-accent)",
+    tint: "var(--ob-lav-tint)",
+    tintSoft: "var(--ob-lav-tint-soft)",
+    deep: "var(--ob-lav-ink-deep)",
+    headline: ["Your data", "stays yours."],
+    cta: "Get started",
+    overshoot: false,
+  },
+];
 
 export const Route = createFileRoute("/onboarding/$step")({
   head: ({ params }) => {
     const titles: Record<string, { t: string; d: string }> = {
-      "1": { t: "Meet Spry — SpineUp", d: "Charge up and begin your spine-care journey with Spry." },
-      "2": { t: "Track Your Curve — SpineUp", d: "Log daily progress and grow your streak." },
-      "3": { t: "Level Up Your Routine — SpineUp", d: "Log brace time and earn XP for real health actions." },
-      "4": { t: "You're set — SpineUp", d: "Connect with people who get it." },
+      "1": {
+        t: "Welcome to SpineUp — Your spine has a story",
+        d: "Start your scoliosis-care journey with SpineUp's gamified daily tracking.",
+      },
+      "2": {
+        t: "Track every stretch — SpineUp",
+        d: "Log daily brace time and exercises, and watch your consistency ring fill up.",
+      },
+      "3": {
+        t: "Show up, level up — SpineUp",
+        d: "Earn XP, build streaks, and get rewarded for real scoliosis-care actions.",
+      },
+      "4": {
+        t: "Your data stays yours — SpineUp",
+        d: "SpineUp stores your data on your device, never sells it, and lets you delete it anytime.",
+      },
     };
     const m = titles[params.step] ?? titles["1"];
     return {
@@ -22,6 +94,8 @@ export const Route = createFileRoute("/onboarding/$step")({
         { name: "description", content: m.d },
         { property: "og:title", content: m.t },
         { property: "og:description", content: m.d },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },
@@ -36,109 +110,102 @@ export const Route = createFileRoute("/onboarding/$step")({
 function StepPage() {
   const { n } = Route.useLoaderData();
   const navigate = useNavigate();
-  const next = () => {
-    if (n < 4) navigate({ to: "/onboarding/$step", params: { step: String(n + 1) } });
-  };
-  const composition = (`screen${n}` as "screen1" | "screen2" | "screen3" | "screen4");
+  const reduced = useReducedMotion();
+  const s = SCREENS[n - 1];
+
+  const go = (step: number) => navigate({ to: "/onboarding/$step", params: { step: String(step) } });
+  const next = () => (n < 4 ? go(n + 1) : navigate({ to: "/profile/setup" }));
+  const skip = () => navigate({ to: "/profile/setup" });
 
   return (
-    <>
-      <LivingBackground composition={composition} />
-      <div className="relative z-10 flex min-h-dvh flex-col">
-        <OnboardingTopBar step={n} />
-        {n === 1 && <Screen1 onNext={next} />}
-        {n === 2 && <Screen2 onNext={next} />}
-        {n === 3 && <Screen3 onNext={next} />}
-        {n === 4 && <Screen4Stub />}
-      </div>
-    </>
-  );
-}
-
-function Screen1({ onNext }: { onNext: () => void }) {
-  return (
-    <div className="relative flex flex-1 flex-col px-6 pb-10">
-      <div className="relative pt-4">
-        <h1 className="font-serif text-6xl font-black leading-[0.9] tracking-tight">
-          <span className="block" style={{ color: "var(--warm-ink)" }}>LET'S</span>
-          <motion.span
-            className="block -rotate-2"
-            style={{ color: "var(--coral)" }}
-            animate={{ rotate: [-2, -1, -2] }}
-            transition={{ duration: 6, repeat: Infinity }}
-          >
-            MOVE
-          </motion.span>
-          <motion.span
-            className="block rotate-1"
-            style={{ color: "var(--lavender)" }}
-            animate={{ rotate: [1, 2, 1] }}
-            transition={{ duration: 5, repeat: Infinity }}
-          >
-            TOGETHER.
-          </motion.span>
-        </h1>
-        <p className="mt-6 max-w-[16rem] text-base font-bold" style={{ color: "var(--warm-ink-muted)" }}>
-          Your spine-care journey, reinvented.
-        </p>
-        <div className="pointer-events-none absolute -right-6 top-24">
-          <Spry pose="idle" size={220} />
+    <div
+      className="relative flex min-h-dvh flex-col"
+      style={{
+        background: `radial-gradient(120% 90% at 50% 35%, ${s.bg} 0%, ${s.bg} 45%, ${s.edge} 100%)`,
+        color: s.tint,
+      }}
+    >
+      <header className="relative z-10 flex items-center justify-between px-5 pt-[max(env(safe-area-inset-top),1rem)]">
+        <div className="flex min-w-12 items-center">
+          {n > 1 ? (
+            <SmallLink onClick={() => go(n - 1)} tint={s.tint} ariaLabel="Go back">
+              Back
+            </SmallLink>
+          ) : (
+            <span className="block h-12 w-12" />
+          )}
         </div>
-      </div>
+        <ProgressDots step={n} tint={s.tint} />
+        <div className="flex min-w-12 justify-end">
+          {n > 1 ? (
+            <SmallLink onClick={skip} tint={s.tint}>
+              Skip
+            </SmallLink>
+          ) : (
+            <span className="block h-12 w-12" />
+          )}
+        </div>
+      </header>
 
-      <div className="mt-auto flex justify-center">
-        <ChargeHoldButton onComplete={onNext} />
-      </div>
-    </div>
-  );
-}
+      <main className="relative z-10 flex flex-1 flex-col items-center px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
+        <div className="flex flex-1 items-center justify-center py-6">
+          <div className="relative grid place-items-center">
+            {n === 1 ? (
+              <Breathing>
+                <MorphShape index={0} fill={s.shape} accent={s.accent} overshoot={false} />
+              </Breathing>
+            ) : (
+              <MorphShape
+                index={n - 1}
+                fill={s.shape}
+                accent={s.accent}
+                overshoot={s.overshoot}
+                progress={n === 2 ? 0.7 : undefined}
+              />
+            )}
+            {n === 3 && (
+              <div className="pointer-events-none absolute inset-0 grid place-items-center">
+                <CountUp to={120} color={s.tint} />
+              </div>
+            )}
+          </div>
+        </div>
 
-function Screen2({ onNext }: { onNext: () => void }) {
-  return (
-    <div className="relative flex flex-1 flex-col px-6 pb-10">
-      <h1 className="font-serif text-6xl font-black leading-[0.9] tracking-tight">
-        <span className="block" style={{ color: "var(--warm-ink)" }}>TRACK</span>
-        <span className="block" style={{ color: "var(--coral)" }}>YOUR</span>
-        <span className="block" style={{ color: "var(--warm-ink)" }}>CURVE.</span>
-      </h1>
-      <p className="mt-5 max-w-[18rem] text-sm font-semibold" style={{ color: "var(--warm-ink-muted)" }}>
-        Log your daily progress, track your symptom patterns over time, and watch your consistency grow to unlock new insights.
-      </p>
+        <motion.div
+          className="w-full max-w-sm"
+          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={
+            reduced
+              ? { duration: 0.4, ease: "easeOut" }
+              : { type: "spring", stiffness: 220, damping: 22, delay: 0.08 }
+          }
+        >
+          <h1 className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight">
+            <span className="block">{s.headline[0]}</span>
+            <span className="block text-[2rem] font-bold italic" style={{ color: s.tintSoft }}>
+              {s.headline[1]}
+            </span>
+          </h1>
 
-      <div className="mt-6 flex-1">
-        <DragPillar onComplete={onNext} />
-      </div>
-    </div>
-  );
-}
+          {n === 4 && (
+            <p className="mt-4 text-sm leading-relaxed" style={{ color: s.tintSoft }}>
+              Your entries are stored locally on this device. We never sell or share them with
+              third parties, and you can delete everything at any time from Settings.
+            </p>
+          )}
 
-function Screen3({ onNext }: { onNext: () => void }) {
-  return (
-    <div className="relative flex flex-1 flex-col items-center px-6 pb-10 text-center">
-      <h1 className="font-serif text-6xl font-black leading-[0.9] tracking-tight">
-        <span className="block" style={{ color: "var(--warm-ink)" }}>LEVEL UP</span>
-        <span className="block" style={{ color: "var(--lavender)" }}>YOUR</span>
-        <span className="block" style={{ color: "var(--lavender)" }}>ROUTINE.</span>
-      </h1>
-      <p className="mx-auto mt-5 max-w-[18rem] text-sm font-semibold" style={{ color: "var(--warm-ink-muted)" }}>
-        Wearing your brace is hard work. You deserve to get rewarded for it.
-      </p>
-
-      <div className="mt-6 flex flex-1 items-end pb-4">
-        <ArcadeSmash onComplete={onNext} />
-      </div>
-    </div>
-  );
-}
-
-function Screen4Stub() {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <Spry pose="waving" size={160} />
-      <h2 className="font-serif text-3xl font-black">Screen 4 — coming next</h2>
-      <p className="max-w-xs text-sm" style={{ color: "var(--warm-ink-muted)" }}>
-        Connect with people who get it. This step will be planned once Screens 1–3 land.
-      </p>
+          <div className="mt-8 flex justify-center pb-2">
+            <KeycapCta
+              label={s.cta}
+              onClick={next}
+              fill={s.tint}
+              ink={s.deep}
+              text={s.edge}
+            />
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }
