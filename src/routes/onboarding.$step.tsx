@@ -126,10 +126,28 @@ function StepPage() {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
   const s = SCREENS[n - 1];
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const go = (step: number) => navigate({ to: "/onboarding/$step", params: { step: String(step) } });
   const next = () => (n < 4 ? go(n + 1) : navigate({ to: "/profile/setup" }));
   const skip = () => navigate({ to: "/profile/setup" });
+
+  // Move focus to the new heading so keyboard and screen-reader users land in context.
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, [n]);
+
+  // Arrow-key navigation between steps.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+      if (e.key === "ArrowRight" && n < 4) go(n + 1);
+      if (e.key === "ArrowLeft" && n > 1) go(n - 1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   return (
     <div
@@ -139,12 +157,14 @@ function StepPage() {
         color: s.tint,
       }}
     >
+      <StepAnnouncer
+        message={`Step ${n} of 4. ${s.headline[0]} ${s.headline[1]} ${s.subtext}`}
+      />
+
       <header className="relative z-10 flex items-center justify-between px-5 pt-[max(env(safe-area-inset-top),1rem)]">
         <div className="flex min-w-12 items-center">
           {n > 1 ? (
-            <SmallLink onClick={() => go(n - 1)} tint={s.tint} ariaLabel="Go back">
-              Back
-            </SmallLink>
+            <IconButton icon={ArrowLeft} label="Go back" onClick={() => go(n - 1)} tint={s.tint} />
           ) : (
             <span className="block h-12 w-12" />
           )}
@@ -152,7 +172,7 @@ function StepPage() {
         <ProgressDots step={n} tint={s.tint} />
         <div className="flex min-w-12 justify-end">
           {n > 1 ? (
-            <SmallLink onClick={skip} tint={s.tint}>
+            <SmallLink onClick={skip} tint={s.tint} ariaLabel="Skip onboarding">
               Skip
             </SmallLink>
           ) : (
@@ -163,7 +183,18 @@ function StepPage() {
 
       <main className="relative z-10 flex flex-1 flex-col items-center px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
         <div className="flex flex-1 items-center justify-center py-6">
-          <div className="relative grid place-items-center">
+          <div
+            className="relative grid place-items-center"
+            {...(n === 2
+              ? {
+                  role: "progressbar" as const,
+                  "aria-valuemin": 0,
+                  "aria-valuemax": 100,
+                  "aria-valuenow": 70,
+                  "aria-label": "Example daily consistency ring, 70 percent complete",
+                }
+              : {})}
+          >
             {n === 1 ? (
               <Breathing>
                 <MorphShape index={0} fill={s.shape} accent={s.accent} overshoot={false} />
@@ -195,28 +226,24 @@ function StepPage() {
               : { type: "spring", stiffness: 220, damping: 22, delay: 0.08 }
           }
         >
-          <h1 className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight outline-offset-4 focus-visible:outline-3"
+            style={{ outlineColor: s.tint }}
+          >
             <span className="block">{s.headline[0]}</span>
             <span className="block text-[2rem] font-bold italic" style={{ color: s.tintSoft }}>
               {s.headline[1]}
             </span>
           </h1>
 
-          {n === 4 && (
-            <p className="mt-4 text-sm leading-relaxed" style={{ color: s.tintSoft }}>
-              Your entries are stored locally on this device. We never sell or share them with
-              third parties, and you can delete everything at any time from Settings.
-            </p>
-          )}
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: s.tintSoft }}>
+            {s.subtext}
+          </p>
 
           <div className="mt-8 flex justify-center pb-2">
-            <KeycapCta
-              label={s.cta}
-              onClick={next}
-              fill={s.tint}
-              ink={s.deep}
-              text={s.edge}
-            />
+            <KeycapCta label={s.cta} onClick={next} fill={s.tint} ink={s.deep} text={s.edge} />
           </div>
         </motion.div>
       </main>
