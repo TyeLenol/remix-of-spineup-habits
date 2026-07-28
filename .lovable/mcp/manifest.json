@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "spineup-mcp",
+      "version": "0.1.0",
+      "title": "SpineUp"
+    },
+    "tools": [
+      {
+        "name": "about_spineup",
+        "title": "About SpineUp",
+        "description": "Describe what SpineUp is, its four sections, and how it stores data. Useful for orienting before calling other tools.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_exercises",
+        "title": "List rehabilitation exercises",
+        "description": "List every scoliosis rehabilitation exercise in the SpineUp routine, with target duration and XP value.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_exercise",
+        "title": "Get exercise details",
+        "description": "Get the full step-by-step instructions and posture cue for one SpineUp rehabilitation exercise, by id or name.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "exercise": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Exercise id (e.g. 'cat-cow') or part of its name."
+            }
+          },
+          "required": [
+            "exercise"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_progress_rules",
+        "title": "Explain XP and level rules",
+        "description": "Explain SpineUp's gamification rules (daily XP goal, XP per level) and optionally compute the level and progress for a given total XP.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "totalXp": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional total XP to convert into a level and progress percentage."
+            }
+          },
+          "required": [
+            "totalXp"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
