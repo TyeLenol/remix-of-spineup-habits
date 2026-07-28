@@ -15,7 +15,7 @@ export function StepSymptoms({ onNext, onSkip }: { onNext: () => void; onSkip: (
 
   return (
     <ProfileShell
-      step={9}
+      step={8}
       composition="screen3"
       title="How's today?"
       explainer="A quick baseline so you can see progress over time. There's no wrong answer — honest beats optimistic."

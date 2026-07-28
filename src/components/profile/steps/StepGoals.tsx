@@ -11,17 +11,22 @@ export function StepGoals({ onNext }: { onNext: () => void }) {
   };
 
   const save = () => {
-    updateProfile((p) => ({ ...p, goals }));
+    updateProfile((p) => ({
+      ...p,
+      goals,
+      completedAt: new Date().toISOString(),
+      xp: (p.xp || 0) + 250,
+    }));
     onNext();
   };
 
   return (
     <ProfileShell
-      step={10}
+      step={9}
       composition="screen1"
       title="Pick your quests."
       explainer="What matters to you right now? Pick at least one — this shapes your daily quests, XP goals, and home screen."
-      primary={{ label: "Continue", onClick: save, disabled: goals.length === 0 }}
+      primary={{ label: "Complete profile · +250 XP", onClick: save, disabled: goals.length === 0 }}
     >
       <Field label="Your goals (choose one or more)">
         <ChipGroup<Goal>
