@@ -1,7 +1,15 @@
 import { createFileRoute, useNavigate, notFound } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef } from "react";
+import { ArrowLeft } from "lucide-react";
 import { MorphShape, Breathing, CountUp } from "@/components/onboarding/MorphShape";
-import { ProgressDots, KeycapCta, SmallLink } from "@/components/onboarding/OnboardingChrome";
+import {
+  ProgressDots,
+  KeycapCta,
+  SmallLink,
+  IconButton,
+  StepAnnouncer,
+} from "@/components/onboarding/OnboardingChrome";
 
 type Screen = {
   bg: string;
@@ -12,6 +20,7 @@ type Screen = {
   tintSoft: string;
   deep: string;
   headline: [string, string];
+  subtext: string;
   cta: string;
   overshoot: boolean;
 };
