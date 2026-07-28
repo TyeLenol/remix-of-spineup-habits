@@ -13,6 +13,7 @@ import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TodayIndexRouteImport } from './routes/today.index'
+import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 const TodayIndexRoute = TodayIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => TodayRoute,
+} as any)
+const TodayCheckInRoute = TodayCheckInRouteImport.update({
+  id: '/check-in',
+  path: '/check-in',
   getParentRoute: () => TodayRoute,
 } as any)
 const ProfileSetupRoute = ProfileSetupRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/today': typeof TodayRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/today/check-in': typeof TodayCheckInRoute
   '/today/': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/today/check-in': typeof TodayCheckInRoute
   '/today': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup': typeof ProfileSetupIndexRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/today': typeof TodayRouteWithChildren
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
+  '/today/check-in': typeof TodayCheckInRoute
   '/today/': typeof TodayIndexRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
+    | '/today/check-in'
     | '/today/'
     | '/profile/setup/$step'
     | '/profile/setup/'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding'
     | '/onboarding/$step'
+    | '/today/check-in'
     | '/today'
     | '/profile/setup/$step'
     | '/profile/setup'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
+    | '/today/check-in'
     | '/today/'
     | '/profile/setup/$step'
     | '/profile/setup/'
@@ -154,6 +166,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/today/'
       preLoaderRoute: typeof TodayIndexRouteImport
+      parentRoute: typeof TodayRoute
+    }
+    '/today/check-in': {
+      id: '/today/check-in'
+      path: '/check-in'
+      fullPath: '/today/check-in'
+      preLoaderRoute: typeof TodayCheckInRouteImport
       parentRoute: typeof TodayRoute
     }
     '/profile/setup': {
@@ -200,10 +219,12 @@ const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
 )
 
 interface TodayRouteChildren {
+  TodayCheckInRoute: typeof TodayCheckInRoute
   TodayIndexRoute: typeof TodayIndexRoute
 }
 
 const TodayRouteChildren: TodayRouteChildren = {
+  TodayCheckInRoute: TodayCheckInRoute,
   TodayIndexRoute: TodayIndexRoute,
 }
 
@@ -232,3 +253,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
