@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
-import { morphPath } from "./morphShapes";
+import {
+  animate,
+  motion,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
+import { morphPath, wavyArcPath, flatArcPath } from "./morphShapes";
 
 type Props = {
   /** 0 = blob, 1 = ring, 2 = burst, 3 = shield */
@@ -51,14 +58,15 @@ export function MorphShape({ index, fill, accent, progress, overshoot = true, si
       >
         <motion.path d={d} fill={fill} fillRule="evenodd" />
         {progress !== undefined && (
-          <RingFill progress={progress} color={accent} overshoot={overshoot} />
+          <WavyRingFill progress={progress} color={accent} overshoot={overshoot} />
         )}
       </motion.svg>
     </div>
   );
 }
 
-function RingFill({
+/** M3-Expressive wavy progress: rippled active arc + flat remaining track. */
+function WavyRingFill({
   progress,
   color,
   overshoot,
@@ -68,17 +76,20 @@ function RingFill({
   overshoot: boolean;
 }) {
   const reduced = useReducedMotion();
-  const R = 63.5;
-  const C = 2 * Math.PI * R;
-  const mv = useMotionValue(reduced ? progress : 0);
-  const offset = useTransform(mv, (v) => C * (1 - v));
+  const p = useMotionValue(reduced ? progress : 0);
+  const phase = useMotionValue(0);
+
+  const active = useTransform([p, phase], ([v, ph]) =>
+    wavyArcPath(0, v as number, { phase: ph as number }),
+  );
+  const track = useTransform(p, (v) => flatArcPath(Math.min(v + 0.02, 1), 1));
 
   useEffect(() => {
     if (reduced) {
-      mv.set(progress);
+      p.set(progress);
       return;
     }
-    const controls = animate(mv, progress, {
+    const controls = animate(p, progress, {
       type: "spring",
       stiffness: overshoot ? 90 : 120,
       damping: overshoot ? 7.5 : 24,
@@ -86,24 +97,33 @@ function RingFill({
       delay: 0.25,
     });
     return () => controls.stop();
-  }, [progress, overshoot, reduced, mv]);
+  }, [progress, overshoot, reduced, p]);
+
+  useAnimationFrame((t) => {
+    if (reduced) return;
+    phase.set((t / 1000) * 1.6);
+  });
 
   return (
-    <motion.circle
-      cx={100}
-      cy={100}
-      r={R}
-      fill="none"
-      stroke={color}
-      strokeWidth={16}
-      strokeLinecap="round"
-      strokeDasharray={C}
-      style={{ strokeDashoffset: offset }}
-      transform="rotate(-90 100 100)"
-      initial={reduced ? { opacity: 0 } : false}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-    />
+    <g fill="none" strokeLinecap="round">
+      <motion.path
+        d={track}
+        stroke={color}
+        strokeWidth={10}
+        opacity={0.28}
+        initial={reduced ? { opacity: 0 } : false}
+        animate={{ opacity: 0.28 }}
+        transition={{ duration: 0.4 }}
+      />
+      <motion.path
+        d={active}
+        stroke={color}
+        strokeWidth={14}
+        initial={reduced ? { opacity: 0 } : false}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      />
+    </g>
   );
 }
 

@@ -93,3 +93,69 @@ export function morphPath(index: number, cx = 100, cy = 100, R = 78): string {
   const innerPath = ringToPath([...outer].reverse(), inner, cx, cy, R);
   return `${outerPath} ${innerPath}`;
 }
+
+/**
+ * M3-Expressive wavy progress arc. Samples a sine-rippled radius along the arc
+ * and emits a smooth open cubic path (Catmull-Rom through the samples).
+ */
+export function wavyArcPath(
+  start: number,
+  end: number,
+  {
+    cx = 100,
+    cy = 100,
+    R = 63.5,
+    amp = 5,
+    waves = 12,
+    phase = 0,
+    steps = 160,
+  }: Partial<{
+    cx: number;
+    cy: number;
+    R: number;
+    amp: number;
+    waves: number;
+    phase: number;
+    steps: number;
+  }> = {},
+): string {
+  if (end - start < 0.0005) return "";
+  const pts: Array<[number, number]> = [];
+  const n = Math.max(8, Math.round(steps * (end - start)));
+  for (let i = 0; i <= n; i++) {
+    const t = start + ((end - start) * i) / n;
+    const a = -Math.PI / 2 + t * TAU;
+    // taper the ripple to zero at both ends so caps sit on the true radius
+    const edge = Math.min(1, (i / n) * 6, ((n - i) / n) * 6);
+    const r = R + amp * edge * Math.sin(waves * t * TAU * 0.16 + phase + t * TAU * waves * 0.84);
+    pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+  }
+  return catmullRomOpen(pts);
+}
+
+function catmullRomOpen(pts: Array<[number, number]>): string {
+  const n = pts.length;
+  if (n < 2) return "";
+  let d = `M ${pts[0][0].toFixed(3)} ${pts[0][1].toFixed(3)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(n - 1, i + 2)];
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += ` C ${c1x.toFixed(3)} ${c1y.toFixed(3)}, ${c2x.toFixed(3)} ${c2y.toFixed(3)}, ${p2[0].toFixed(3)} ${p2[1].toFixed(3)}`;
+  }
+  return d;
+}
+
+/** Flat (non-wavy) arc used for the remaining track. */
+export function flatArcPath(start: number, end: number, cx = 100, cy = 100, R = 63.5): string {
+  if (end - start < 0.0005) return "";
+  const a0 = -Math.PI / 2 + start * TAU;
+  const a1 = -Math.PI / 2 + end * TAU;
+  const large = end - start > 0.5 ? 1 : 0;
+  return `M ${(cx + Math.cos(a0) * R).toFixed(3)} ${(cy + Math.sin(a0) * R).toFixed(3)} A ${R} ${R} 0 ${large} 1 ${(cx + Math.cos(a1) * R).toFixed(3)} ${(cy + Math.sin(a1) * R).toFixed(3)}`;
+}
