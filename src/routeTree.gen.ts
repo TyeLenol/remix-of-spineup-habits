@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
@@ -16,6 +17,11 @@ import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
 import { Route as ProfileSetupStepRouteImport } from './routes/profile.setup.$step'
 
+const TodayRoute = TodayRouteImport.update({
+  id: '/today',
+  path: '/today',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -50,6 +56,7 @@ const ProfileSetupStepRoute = ProfileSetupStepRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/today': typeof TodayRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/today': typeof TodayRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup': typeof ProfileSetupIndexRoute
@@ -66,6 +74,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/today': typeof TodayRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/onboarding'
+    | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/profile/setup/$step'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/onboarding'
+    | '/today'
     | '/onboarding/$step'
     | '/profile/setup/$step'
     | '/profile/setup'
@@ -91,6 +102,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/onboarding'
+    | '/today'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/profile/setup/$step'
@@ -100,11 +112,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
+  TodayRoute: typeof TodayRoute
   ProfileSetupRoute: typeof ProfileSetupRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/today': {
+      id: '/today'
+      path: '/today'
+      fullPath: '/today'
+      preLoaderRoute: typeof TodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -179,6 +199,7 @@ const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
+  TodayRoute: TodayRoute,
   ProfileSetupRoute: ProfileSetupRouteWithChildren,
 }
 export const routeTree = rootRouteImport
