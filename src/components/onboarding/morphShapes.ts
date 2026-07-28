@@ -30,10 +30,10 @@ function radiusFor(shape: ShapeName, a: number): number {
     }
     case "shield": {
       const down = Math.max(0, Math.sin(a)); // y-down: bottom of the shape
-      const taper = 1 - 0.42 * Math.pow(down, 1.5);
-      const shoulder = 1 - 0.30 * Math.pow(down, 1.2) * Math.abs(Math.cos(a));
-      const crown = 1 + 0.05 * Math.pow(Math.max(0, -Math.sin(a)), 2);
-      return taper * shoulder * crown;
+      // narrow the flanks toward the bottom so the silhouette comes to a point
+      const flank = 1 - 0.58 * Math.pow(down, 0.85) * Math.pow(Math.abs(Math.cos(a)), 0.8);
+      const crown = 1 + 0.07 * Math.pow(Math.max(0, -Math.sin(a)), 2);
+      return flank * crown;
     }
   }
 }
