@@ -1,41 +1,60 @@
 ## Goal
-Grow onboarding from 4 to 5 screens, add a Community screen, and rebuild the final Privacy screen so it no longer reads as a repeat of screen 1 — while keeping every existing animation that still serves the user (HCI-checked).
+Build ONLY the TODAY page (`/today`) — the daily rehab + check-in home — in the app's existing M3 Expressive language (serif display, single-hue tonal surfaces, spring motion, keycap buttons), with accessibility as a first-class constraint. Uses the existing on-device profile store; no backend.
 
-## New flow
+## Layout (mobile-first, single column, max-w-md, thumb-reachable)
 
-| # | Theme | Hue family | Central shape | Motion signature |
-|---|---|---|---|---|
-| 1 | Welcome | Sage | Blob | Slow breathing loop (unchanged) |
-| 2 | Tracking | Lavender | Wavy progress ring | Spring overfill + wave drift (unchanged) |
-| 3 | Rewards | Coral | Burst + count-up | Spring scale-bounce (unchanged) |
-| 4 | Community | **Azure (new family)** | Rosette / linked-nodes cluster | Nodes spring in one by one, links draw between them |
-| 5 | Privacy | Lavender | Layered shield | No overshoot; slow inward settle |
+```text
+┌──────────────────────────────┐
+│ Good morning, Ada       [av] │  greeting + date
+│                              │
+│ ╭──────── XP HERO ────────╮  │  sage tonal card
+│ │ Lv 4 · Steady Riser     │  │
+│ │ ((wavy progress arc))   │  │  reuses wavyArcPath
+│ │ 240 / 400 XP  · today ▮▮│  │  daily goal bar
+│ ╰─────────────────────────╯  │
+│                              │
+│ ╭─ CHECK-IN SUMMARY ──────╮  │  tap → /today/check-in
+│ │ Not logged yet      →   │  │  or: pain 4/10 · Okay · 16h
+│ ╰─────────────────────────╯  │
+│                              │
+│ Today's routine     3 / 8    │
+│ ▸ Cat-Cow Mobilization  90s  │  8 expandable exercise rows
+│ ▸ Side-Plank Core Hold  30s  │  each: check target, steps, cues
+│ ...                          │
+│                              │
+│ ▾ Today's details            │  collapsible
+│   stretches · streak · appt  │
+└──────────────────────────────┘
+```
 
-## 1. New Community screen (4)
-- New color family in `styles.css`: `--ob-azure-*`, solid `#155E75` with a same-hue edge `#082F3E` (dark-mode variant too), tints from the same family, all pairs checked for 4.5:1.
-- New morph target `cluster` in `morphShapes.ts`: a 5-lobe rosette on the shared 72-point topology, so the coral burst genuinely morphs into it (still a real path morph, not a crossfade).
-- Overlay layer: 5 satellite dots on a circle plus connecting chords. Dots spring in with staggered delay (M3 Expressive staggered container transform); chords draw via `pathLength` 0→1 after each dot lands. Reduced motion: everything static and faded in.
-- Copy: headline "You're not doing this alone." / italic accent "Find your people."; subtext about connecting with others managing scoliosis — sharing progress, tips, and encouragement.
+Rationale (HCI): one primary action per band, progressive disclosure for exercise detail so the list stays scannable (Miller/chunking), status card above the fold answers "what do I owe today?" in under a second.
 
-## 2. Redesigned Privacy screen (5)
-Problem: shield + centered headline currently mirrors screen 1's silhouette and rhythm. Fixes:
-- Shape becomes a **layered shield**: outer shield outline plus a smaller concentric inner shield and a short vertical "spine" line, drawn with an inward settle rather than a bounce — visually denser and clearly not the screen-1 blob.
-- **Composition change**: shape scaled smaller and offset, with three short trust chips ("On your device", "Never sold", "Delete anytime") entering as a staggered vertical list under the headline — a different layout rhythm from the single-block screens.
-- Keeps the no-overshoot rule; motion is a soft, certain settle.
+## Sections to build
+1. **Header** — greeting by time of day, formatted date, streak flame chip.
+2. **XP hero card** — level, level title, wavy M3 progress arc (reuse `wavyArcPath` from `morphShapes.ts`), total XP, and a separate daily-XP-goal linear indicator. Spring fill with slight overshoot; static under reduced motion.
+3. **Check-in summary card** — single large tap target; shows "Not logged yet" or pain/10 · mood · brace hours. Opens a full-screen check-in flow route (pain slider 0–10, 5-point mood, pain locations, fatigue + tightness, conditional brace hours from profile brace status, notes). Saving awards XP and returns.
+4. **Exercise library** — the 8 named exercises with duration, steps, posture cues. Row = accordion; checkbox marks complete (+XP), with spring check morph and haptic. Completed rows dim and reorder to bottom is NOT done (avoids disorienting motion) — they just get a completed treatment.
+5. **Today's details** — collapsible: stretches completed today, active streak, next appointment countdown.
 
-## 3. HCI / M3 Expressive pass on existing motion
-- Keep: breathing blob, spring ring overfill, burst bounce, shape-morph button press, keycap depth. These map to M3 Expressive's emphasized easing + spring physics and each communicates the screen's concept.
-- Change (HCI-driven): the CountUp on screen 3 currently runs 1.1s — shorten to ~0.9s and ease out harder so the number is readable sooner (Doherty threshold / avoid waiting on decorative motion).
-- Change: arrow-key navigation currently fires on every keydown without dependency scoping; make it explicit and skip when a control has focus and would handle the key itself.
-- Add: staggered content entry (headline → subtext → CTA) with small offsets, giving hierarchy through motion instead of one block sliding up.
-- Progress dots go 4 → 5 everywhere; announcer, aria-valuemax, loader bounds, and head metadata all updated for step 5.
+## Motion (M3 Expressive, reduced-motion safe)
+- Emphasized-decelerate easing tokens already in `styles.css`.
+- Card entry: staggered rise (40ms apart), spring.
+- Exercise expand: height + opacity with emphasized easing; check mark springs with slight overshoot.
+- XP arc: spring overfill and settle.
+- Every animation collapses to a plain fade under `prefers-reduced-motion`.
 
-## 4. Accessibility (carried forward and extended)
-- New azure tokens contrast-verified; chips and links use tokens, not hardcoded colors.
-- All new interactive/informative elements labeled; decorative dots/chords `aria-hidden`.
-- Community node animation and chip stagger both disabled under `prefers-reduced-motion`.
-- Focus still moves to the heading per step; 48px targets retained.
+## Accessibility
+- Semantic `<main>`, one `<h1>`, sectioned `<h2>`s.
+- Exercise checkboxes are real buttons with `aria-pressed`; accordions use `aria-expanded` + `aria-controls`.
+- XP arc is `role="progressbar"` with value text; decorative SVG `aria-hidden`.
+- Pain scale is a labelled slider with `aria-valuetext` ("4 out of 10"); mood is a radiogroup.
+- 48px minimum targets, visible focus rings, `aria-live` for XP gains, tokens only for color (4.5:1 verified), `h-dvh` not `h-screen`.
+
+## Data
+- Extend the existing on-device store with a `today` slice: date-stamped exercise completions, check-in record, XP ledger, streak. Nothing leaves the device.
 
 ## Technical notes
-- Files: `src/styles.css` (azure family), `src/components/onboarding/morphShapes.ts` (cluster shape + layered shield helper), `src/components/onboarding/MorphShape.tsx` (node/chord overlay, layered shield), `src/routes/onboarding.$step.tsx` (5 screens, new copy, chips, stagger, bounds), `src/components/onboarding/OnboardingChrome.tsx` (chip component, dots total).
-- No backend or data changes.
+- New: `src/routes/today.tsx` (+ `today.check-in.tsx`), `src/lib/today-store.ts`, `src/lib/exercises.ts`, components under `src/components/today/`.
+- Reuses `morphShapes.ts` arc math and the keycap button treatment from onboarding.
+- Route metadata: unique title/description/og tags for the Today page.
+- Scope: only the TODAY domain — no Journey, Community, or Me pages.
