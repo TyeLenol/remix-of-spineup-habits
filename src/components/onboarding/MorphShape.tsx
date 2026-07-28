@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
-import { morphPath } from "./morphShapes";
+import {
+  animate,
+  motion,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
+import { morphPath, wavyArcPath, flatArcPath } from "./morphShapes";
 
 type Props = {
   /** 0 = blob, 1 = ring, 2 = burst, 3 = shield */
