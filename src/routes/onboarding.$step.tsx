@@ -229,8 +229,8 @@ function StepPage() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight outline-offset-4 focus-visible:outline-3"
-            style={{ outlineColor: s.tint }}
+            className="font-serif text-[2.6rem] font-black leading-[1.02] tracking-tight outline-offset-4 focus-visible:outline-2"
+            style={{ outlineColor: `color-mix(in oklab, ${s.tint} 55%, transparent)` }}
           >
             <span className="block">{s.headline[0]}</span>
             <span className="block text-[2rem] font-bold italic" style={{ color: s.tintSoft }}>
