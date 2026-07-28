@@ -150,7 +150,16 @@
   --ob-coral-tint: #fdeee7;
   --ob-coral-tint-soft: #f5c6ae;
   --ob-coral-ink-deep: #5c2210;
+
+  --ob-azure-bg: #10556c;
+  --ob-azure-edge: #082f3e;
+  --ob-azure-shape: #1c7592;
+  --ob-azure-accent: #7fcbe4;
+  --ob-azure-tint: #e6f5fa;
+  --ob-azure-tint-soft: #b9e2f0;
+  --ob-azure-ink-deep: #052430;
 }
+
 
 .dark {
   --ob-sage-bg: #0a4a3a;
