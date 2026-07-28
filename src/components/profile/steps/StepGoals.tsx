@@ -22,7 +22,7 @@ export function StepGoals({ onNext }: { onNext: () => void }) {
 
   return (
     <ProfileShell
-      step={9}
+      step={5}
       composition="screen1"
       title="Pick your quests."
       explainer="What matters to you right now? Pick at least one — this shapes your daily quests, XP goals, and home screen."

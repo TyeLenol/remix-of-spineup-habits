@@ -26,7 +26,7 @@ export function StepCurve({ onNext, onSkip }: { onNext: () => void; onSkip: () =
 
   return (
     <ProfileShell
-      step={5}
+      step={3}
       composition="screen2"
       title="Curve details."
       explainer="Only fill what you know from your last clinic visit. If you don't have your X-ray report handy, skip — you can add these later."

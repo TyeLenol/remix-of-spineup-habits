@@ -89,13 +89,9 @@ export function updateProfile(patch: (p: ProfileData) => ProfileData) {
 export const PROFILE_STEPS = [
   { n: 1, key: "consent", label: "Privacy" },
   { n: 2, key: "basics", label: "About you" },
-  { n: 3, key: "body", label: "Body" },
-  { n: 4, key: "story", label: "Your story" },
-  { n: 5, key: "curve", label: "Curve details" },
-  { n: 6, key: "brace", label: "Brace" },
-  { n: 7, key: "pt", label: "Physio" },
-  { n: 8, key: "symptoms", label: "Today" },
-  { n: 9, key: "goals", label: "Goals" },
+  { n: 3, key: "curve", label: "Your curve" },
+  { n: 4, key: "care", label: "Care routine" },
+  { n: 5, key: "goals", label: "Goals" },
 ] as const;
 
 export const TOTAL_STEPS = PROFILE_STEPS.length;
