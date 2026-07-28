@@ -23,8 +23,8 @@ function radiusFor(shape: ShapeName, a: number): number {
     }
     case "shield": {
       const down = Math.max(0, Math.sin(a)); // y-down: bottom of the shape
-      const taper = 1 - 0.24 * Math.pow(down, 1.6);
-      const shoulder = 1 - 0.16 * Math.pow(down, 2) * Math.abs(Math.cos(a));
+      const taper = 1 - 0.42 * Math.pow(down, 1.5);
+      const shoulder = 1 - 0.30 * Math.pow(down, 1.2) * Math.abs(Math.cos(a));
       const crown = 1 + 0.05 * Math.pow(Math.max(0, -Math.sin(a)), 2);
       return taper * shoulder * crown;
     }
