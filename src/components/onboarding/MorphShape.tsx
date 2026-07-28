@@ -260,8 +260,8 @@ export function CountUp({ to, color }: { to: number; color: string }) {
       return;
     }
     const controls = animate(0, to, {
-      duration: 1.1,
-      ease: [0.2, 0, 0, 1],
+      duration: 0.9,
+      ease: [0.05, 0.7, 0.1, 1],
       onUpdate: (v) => setValue(Math.round(v)),
       onComplete: () => {
         animate(scale, [1, 1.18, 1], { type: "spring", stiffness: 320, damping: 9 });
