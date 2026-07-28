@@ -3,12 +3,12 @@ import { useCallback, useEffect, useState } from "react";
 
 export type Mood = "awful" | "low" | "okay" | "good" | "great";
 
-export const MOODS: Array<{ id: Mood; label: string; face: string }> = [
-  { id: "awful", label: "Awful", face: "☹" },
-  { id: "low", label: "Low", face: "🙁" },
-  { id: "okay", label: "Okay", face: "😐" },
-  { id: "good", label: "Good", face: "🙂" },
-  { id: "great", label: "Great", face: "😄" },
+export const MOODS: Array<{ id: Mood; label: string; score: number }> = [
+  { id: "awful", label: "Awful", score: 1 },
+  { id: "low", label: "Low", score: 2 },
+  { id: "okay", label: "Okay", score: 3 },
+  { id: "good", label: "Good", score: 4 },
+  { id: "great", label: "Great", score: 5 },
 ];
 
 export const PAIN_LOCATIONS = [

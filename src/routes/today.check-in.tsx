@@ -125,8 +125,19 @@ function CheckInPage() {
                         : "border-outline-variant text-warm-ink"
                     }`}
                   >
-                    <span aria-hidden className="text-lg leading-none">
-                      {m.face}
+                    <span aria-hidden className="mb-1 flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <span
+                          key={n}
+                          className={`block h-1.5 w-1.5 rounded-full ${
+                            n <= m.score
+                              ? on
+                                ? "bg-sage-ink"
+                                : "bg-warm-ink/45"
+                              : "bg-warm-ink/12"
+                          }`}
+                        />
+                      ))}
                     </span>
                     {m.label}
                   </motion.button>

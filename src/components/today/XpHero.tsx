@@ -33,7 +33,7 @@ export function XpHero({
 }) {
   const reduced = useReducedMotion();
   const p = useMotionValue(reduced ? progress : 0);
-  const active = useTransform(p, (v) => wavyArcPath(0, Math.max(0.001, v), { R: 70, amp: 4 }));
+  const active = useTransform(p, (v) => v < 0.006 ? "" : wavyArcPath(0, v, { R: 70, amp: 4 }));
   const dailyPct = Math.min(1, dailyGoal ? dailyXp / dailyGoal : 0);
 
   useEffect(() => {
