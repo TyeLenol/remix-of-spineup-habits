@@ -35,8 +35,7 @@ export interface ProfileData {
     risser?: number;
     lenke?: string;
   };
-  maturity: { menarche?: "yes" | "no" | "na" | "skip"; ageAtMenarche?: number };
-  brace: { type?: BraceType; hoursPerDay?: number; startDate?: string };
+  brace: { wears?: boolean; type?: BraceType; hoursPerDay?: number; startDate?: string };
   pt: { method?: PtMethod };
   symptoms: { pain?: number; fatigue?: number; activity?: "low" | "moderate" | "high" };
   goals: Goal[];
@@ -53,7 +52,6 @@ export const emptyProfile = (): ProfileData => ({
   body: { units: "metric" },
   story: {},
   curve: {},
-  maturity: {},
   brace: {},
   pt: {},
   symptoms: {},
@@ -94,12 +92,10 @@ export const PROFILE_STEPS = [
   { n: 3, key: "body", label: "Body" },
   { n: 4, key: "story", label: "Your story" },
   { n: 5, key: "curve", label: "Curve details" },
-  { n: 6, key: "maturity", label: "Growth" },
-  { n: 7, key: "brace", label: "Brace" },
-  { n: 8, key: "pt", label: "Physio" },
-  { n: 9, key: "symptoms", label: "Today" },
-  { n: 10, key: "goals", label: "Goals" },
-  { n: 11, key: "companion", label: "Spry" },
+  { n: 6, key: "brace", label: "Brace" },
+  { n: 7, key: "pt", label: "Physio" },
+  { n: 8, key: "symptoms", label: "Today" },
+  { n: 9, key: "goals", label: "Goals" },
 ] as const;
 
 export const TOTAL_STEPS = PROFILE_STEPS.length;
