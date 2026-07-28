@@ -7,10 +7,10 @@ import {
   useReducedMotion,
   useTransform,
 } from "motion/react";
-import { morphPath, wavyArcPath, flatArcPath } from "./morphShapes";
+import { morphPath, wavyArcPath, flatArcPath, clusterNodes, clusterLinks } from "./morphShapes";
 
 type Props = {
-  /** 0 = blob, 1 = ring, 2 = burst, 3 = shield */
+  /** 0 = blob, 1 = ring, 2 = burst, 3 = cluster, 4 = shield */
   index: number;
   fill: string;
   accent: string;
@@ -18,9 +18,22 @@ type Props = {
   progress?: number;
   overshoot?: boolean;
   size?: number;
+  /** community screen: staggered nodes + drawn connections */
+  nodes?: boolean;
+  /** privacy screen: concentric inner shield + spine line */
+  layered?: boolean;
 };
 
-export function MorphShape({ index, fill, accent, progress, overshoot = true, size = 300 }: Props) {
+export function MorphShape({
+  index,
+  fill,
+  accent,
+  progress,
+  overshoot = true,
+  size = 300,
+  nodes = false,
+  layered = false,
+}: Props) {
   const reduced = useReducedMotion();
   const mv = useMotionValue(index);
   const d = useTransform(mv, (v) => morphPath(v));
@@ -60,10 +73,104 @@ export function MorphShape({ index, fill, accent, progress, overshoot = true, si
         {progress !== undefined && (
           <WavyRingFill progress={progress} color={accent} overshoot={overshoot} />
         )}
+        {nodes && <ClusterOverlay color={accent} />}
+        {layered && <ShieldLayers color={accent} />}
       </motion.svg>
     </div>
   );
 }
+
+/** Community: connections draw in, then each node springs into place. */
+function ClusterOverlay({ color }: { color: string }) {
+  const reduced = useReducedMotion();
+  const pts = clusterNodes();
+  const links = clusterLinks();
+  return (
+    <g>
+      {links.map((l, i) => (
+        <motion.path
+          key={l.key}
+          d={l.d}
+          stroke={color}
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          fill="none"
+          opacity={0.55}
+          initial={reduced ? { opacity: 0 } : { pathLength: 0 }}
+          animate={reduced ? { opacity: 0.55 } : { pathLength: 1 }}
+          transition={
+            reduced
+              ? { duration: 0.5, ease: "easeOut" }
+              : { duration: 0.5, delay: 0.25 + i * 0.05, ease: [0.05, 0.7, 0.1, 1] }
+          }
+        />
+      ))}
+      {pts.map((p, i) => (
+        <motion.circle
+          key={i}
+          cx={p.x}
+          cy={p.y}
+          r={9}
+          fill={color}
+          initial={reduced ? { opacity: 0 } : { scale: 0, opacity: 0 }}
+          animate={reduced ? { opacity: 1 } : { scale: 1, opacity: 1 }}
+          style={{ originX: `${p.x}px`, originY: `${p.y}px` }}
+          transition={
+            reduced
+              ? { duration: 0.45, ease: "easeOut" }
+              : { type: "spring", stiffness: 420, damping: 14, delay: 0.55 + i * 0.08 }
+          }
+        />
+      ))}
+    </g>
+  );
+}
+
+/** Privacy: an inner concentric shield and a short spine that settle inward. */
+function ShieldLayers({ color }: { color: string }) {
+  const reduced = useReducedMotion();
+  const inner = morphPath(4, 100, 100, 50);
+  const settle = reduced
+    ? { duration: 0.5, ease: "easeOut" as const }
+    : { duration: 0.75, ease: [0.05, 0.7, 0.1, 1] as [number, number, number, number], delay: 0.15 };
+  return (
+    <g>
+      <motion.path
+        d={inner}
+        fill="none"
+        stroke={color}
+        strokeWidth={2.5}
+        opacity={0.75}
+        initial={reduced ? { opacity: 0 } : { scale: 1.25, opacity: 0 }}
+        animate={reduced ? { opacity: 0.75 } : { scale: 1, opacity: 0.75 }}
+        style={{ originX: "100px", originY: "100px" }}
+        transition={settle}
+      />
+      <motion.path
+        d="M 100 74 L 100 122"
+        stroke={color}
+        strokeWidth={5}
+        strokeLinecap="round"
+        initial={reduced ? { opacity: 0 } : { pathLength: 0, opacity: 0 }}
+        animate={reduced ? { opacity: 1 } : { pathLength: 1, opacity: 1 }}
+        transition={reduced ? { duration: 0.5 } : { duration: 0.6, delay: 0.45, ease: [0.05, 0.7, 0.1, 1] }}
+      />
+      {[86, 100, 114].map((y, i) => (
+        <motion.circle
+          key={y}
+          cx={100}
+          cy={y}
+          r={4}
+          fill={color}
+          initial={reduced ? { opacity: 0 } : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: reduced ? 0 : 0.7 + i * 0.09 }}
+        />
+      ))}
+    </g>
+  );
+}
+
 
 /** M3-Expressive wavy progress: rippled active arc + flat remaining track. */
 function WavyRingFill({
