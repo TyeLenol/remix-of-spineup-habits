@@ -1,39 +1,41 @@
 ## Goal
-Upgrade the SpineUp onboarding to a more expressive, more accessible M3 Expressive flow.
+Grow onboarding from 4 to 5 screens, add a Community screen, and rebuild the final Privacy screen so it no longer reads as a repeat of screen 1 — while keeping every existing animation that still serves the user (HCI-checked).
 
-## 1. Screen 2: squiggly progress ring
-Replace the plain stroked circle with an M3-Expressive **wavy progress indicator**:
-- Generate the ring path procedurally in `morphShapes.ts`: a circle radius R with a sine ripple (`r = R + amp*sin(k*θ)`), emitted as a smooth cubic path.
-- The **filled portion** is squiggly; the remaining track is a flat low-opacity arc — matching M3's active-wave / flat-track behavior.
-- Animate the wave phase slowly (continuous drift) plus the spring fill sweep already in place. Reduced motion: static wave, no drift, final progress set instantly.
-- Rounded caps, same accent token, same 0.7 progress.
+## New flow
 
-## 2. Subtext on every screen
-Screens 1–3 get one short supporting line each (screen 4 already has one). Kept to a single sentence, muted tint, below the headline:
-- 1: how daily tracking builds the picture of your curve
-- 2: brace hours and exercises filling one daily ring
-- 3: XP and streaks earned from real actions
-Note: this reverses the earlier "no subtext on 1–3" instruction, per this request.
+| # | Theme | Hue family | Central shape | Motion signature |
+|---|---|---|---|---|
+| 1 | Welcome | Sage | Blob | Slow breathing loop (unchanged) |
+| 2 | Tracking | Lavender | Wavy progress ring | Spring overfill + wave drift (unchanged) |
+| 3 | Rewards | Coral | Burst + count-up | Spring scale-bounce (unchanged) |
+| 4 | Community | **Azure (new family)** | Rosette / linked-nodes cluster | Nodes spring in one by one, links draw between them |
+| 5 | Privacy | Lavender | Layered shield | No overshoot; slow inward settle |
 
-## 3. Back as an icon
-Swap the "Back" word for a lucide `ArrowLeft` inside a circular icon button, `aria-label="Go back"`, minimum 48x48 target, visible focus ring.
+## 1. New Community screen (4)
+- New color family in `styles.css`: `--ob-azure-*`, solid `#155E75` with a same-hue edge `#082F3E` (dark-mode variant too), tints from the same family, all pairs checked for 4.5:1.
+- New morph target `cluster` in `morphShapes.ts`: a 5-lobe rosette on the shared 72-point topology, so the coral burst genuinely morphs into it (still a real path morph, not a crossfade).
+- Overlay layer: 5 satellite dots on a circle plus connecting chords. Dots spring in with staggered delay (M3 Expressive staggered container transform); chords draw via `pathLength` 0→1 after each dot lands. Reduced motion: everything static and faded in.
+- Copy: headline "You're not doing this alone." / italic accent "Find your people."; subtext about connecting with others managing scoliosis — sharing progress, tips, and encouragement.
 
-## 4. Creative M3 Expressive buttons
-Rework the CTA and secondary controls into a shared expressive button set:
-- **Shape morph on press**: the CTA's border radius animates from pill to a squircle-ish smaller radius on press (M3 Expressive's signature shape-change), springing back on release — layered on top of the existing keycap depth press.
-- Icon-button variants (back/skip) get the same shape-morph and a tonal container hover/press state.
-- All motion spring-based, all disabled under reduced motion (opacity/fill state changes only).
+## 2. Redesigned Privacy screen (5)
+Problem: shield + centered headline currently mirrors screen 1's silhouette and rhythm. Fixes:
+- Shape becomes a **layered shield**: outer shield outline plus a smaller concentric inner shield and a short vertical "spine" line, drawn with an inward settle rather than a bounce — visually denser and clearly not the screen-1 blob.
+- **Composition change**: shape scaled smaller and offset, with three short trust chips ("On your device", "Never sold", "Delete anytime") entering as a staggered vertical list under the headline — a different layout rhythm from the single-block screens.
+- Keeps the no-overshoot rule; motion is a soft, certain settle.
 
-## 5. Accessibility pass
-- **Contrast**: verify every tint/tintSoft pair against its background reaches WCAG AA (4.5:1 body, 3:1 large); darken/lighten the affected tokens in `src/styles.css` rather than in components. `tintSoft` at italic-accent size and subtext size is the main risk.
-- **Landmarks/headings**: keep exactly one `<main>` and one `<h1>` per screen; the layout route owns page structure.
-- **Live region**: announce screen changes with a polite `aria-live` status ("Step 2 of 4: Every stretch counts") so screen-reader users get context on navigation.
-- **Progress semantics**: give the ring itself `role="progressbar"` with `aria-valuenow/min/max` and a label; keep decorative shapes `aria-hidden`.
-- **Focus management**: move focus to the heading on each step change so keyboard/SR users don't get dropped at the top of the document.
-- **Keyboard**: Left/Right arrow keys navigate steps; all controls reachable in DOM order; `focus-visible` rings use a token with sufficient contrast against each screen's background (not `white/40` everywhere).
-- **Targets**: all interactive elements ≥48x48 CSS px.
-- **Motion**: honor `prefers-reduced-motion` everywhere, including the new wave drift.
+## 3. HCI / M3 Expressive pass on existing motion
+- Keep: breathing blob, spring ring overfill, burst bounce, shape-morph button press, keycap depth. These map to M3 Expressive's emphasized easing + spring physics and each communicates the screen's concept.
+- Change (HCI-driven): the CountUp on screen 3 currently runs 1.1s — shorten to ~0.9s and ease out harder so the number is readable sooner (Doherty threshold / avoid waiting on decorative motion).
+- Change: arrow-key navigation currently fires on every keydown without dependency scoping; make it explicit and skip when a control has focus and would handle the key itself.
+- Add: staggered content entry (headline → subtext → CTA) with small offsets, giving hierarchy through motion instead of one block sliding up.
+- Progress dots go 4 → 5 everywhere; announcer, aria-valuemax, loader bounds, and head metadata all updated for step 5.
+
+## 4. Accessibility (carried forward and extended)
+- New azure tokens contrast-verified; chips and links use tokens, not hardcoded colors.
+- All new interactive/informative elements labeled; decorative dots/chords `aria-hidden`.
+- Community node animation and chip stagger both disabled under `prefers-reduced-motion`.
+- Focus still moves to the heading per step; 48px targets retained.
 
 ## Technical notes
-- New/changed: `morphShapes.ts` (wavy ring generator), `MorphShape.tsx` (WavyRingFill replaces RingFill), `OnboardingChrome.tsx` (expressive CTA + icon button + live region + progress dots labeling), `onboarding.$step.tsx` (subtexts, focus management, arrow-key nav, icon back), `styles.css` (contrast-fixed tint tokens, focus-ring token).
+- Files: `src/styles.css` (azure family), `src/components/onboarding/morphShapes.ts` (cluster shape + layered shield helper), `src/components/onboarding/MorphShape.tsx` (node/chord overlay, layered shield), `src/routes/onboarding.$step.tsx` (5 screens, new copy, chips, stagger, bounds), `src/components/onboarding/OnboardingChrome.tsx` (chip component, dots total).
 - No backend or data changes.
