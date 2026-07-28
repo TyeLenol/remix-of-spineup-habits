@@ -4,6 +4,9 @@ import { loadProfile, updateProfile, type BraceType } from "@/lib/profile-store"
 
 export function StepBrace({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
   const initial = loadProfile().brace;
+  const [wears, setWears] = useState<"yes" | "no" | undefined>(
+    initial.wears === true ? "yes" : initial.wears === false ? "no" : undefined,
+  );
   const [type, setType] = useState<BraceType | undefined>(initial.type);
   const [hours, setHours] = useState<string>(initial.hoursPerDay ? String(initial.hoursPerDay) : "");
   const [startDate, setStartDate] = useState(initial.startDate ?? "");
@@ -11,24 +14,42 @@ export function StepBrace({ onNext, onSkip }: { onNext: () => void; onSkip: () =
   const save = () => {
     updateProfile((p) => ({
       ...p,
-      brace: {
-        type,
-        hoursPerDay: hours ? Number(hours) : undefined,
-        startDate: startDate || undefined,
-      },
+      brace:
+        wears === "yes"
+          ? {
+              wears: true,
+              type,
+              hoursPerDay: hours ? Number(hours) : undefined,
+              startDate: startDate || undefined,
+            }
+          : { wears: false, type: "none" },
     }));
     onNext();
   };
 
   return (
     <ProfileShell
-      step={7}
+      step={6}
       composition="screen1"
       title="Your brace."
-      explainer="Tell Spry about your brace so we can shape your daily hour goal and celebrate every hour you clock."
-      primary={{ label: "Continue", onClick: save }}
-      secondary={{ label: "I don't wear a brace", onClick: onSkip }}
+      explainer="If you wear a brace, we'll shape your daily hour goal and celebrate every hour you clock."
+      primary={{ label: "Continue", onClick: save, disabled: !wears }}
+      secondary={{ label: "Skip", onClick: onSkip }}
     >
+      <Field label="Do you currently wear a brace?">
+        <ChipGroup<"yes" | "no">
+          columns={2}
+          value={wears}
+          onChange={setWears}
+          options={[
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+          ]}
+        />
+      </Field>
+
+      {wears === "yes" && (
+        <>
       <Field label="Brace type">
         <ChipGroup<BraceType>
           columns={2}
@@ -64,6 +85,8 @@ export function StepBrace({ onNext, onSkip }: { onNext: () => void; onSkip: () =
           max={new Date().toISOString().slice(0, 10)}
         />
       </Field>
+        </>
+      )}
     </ProfileShell>
   );
 }

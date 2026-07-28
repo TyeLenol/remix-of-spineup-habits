@@ -13,7 +13,7 @@ export function StepPt({ onNext, onSkip }: { onNext: () => void; onSkip: () => v
 
   return (
     <ProfileShell
-      step={8}
+      step={7}
       composition="screen2"
       title="Physio approach."
       explainer="If you're following a specific scoliosis exercise method, we'll tune reminders and content around it."

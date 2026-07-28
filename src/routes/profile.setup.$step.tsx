@@ -7,12 +7,10 @@ import { StepBasics } from "@/components/profile/steps/StepBasics";
 import { StepBody } from "@/components/profile/steps/StepBody";
 import { StepStory } from "@/components/profile/steps/StepStory";
 import { StepCurve } from "@/components/profile/steps/StepCurve";
-import { StepMaturity } from "@/components/profile/steps/StepMaturity";
 import { StepBrace } from "@/components/profile/steps/StepBrace";
 import { StepPt } from "@/components/profile/steps/StepPt";
 import { StepSymptoms } from "@/components/profile/steps/StepSymptoms";
 import { StepGoals } from "@/components/profile/steps/StepGoals";
-import { StepCompanion } from "@/components/profile/steps/StepCompanion";
 import { LivingBackground } from "@/components/onboarding/LivingBackground";
 import { Spry } from "@/components/onboarding/Spry";
 
@@ -48,16 +46,7 @@ function StepPage() {
   const goStep = (target: number) =>
     navigate({ to: "/profile/setup/$step", params: { step: String(target) } });
 
-  const next = () => {
-    // If not in bracing-related stages, skip the brace step (step 7)
-    if (n === 6) {
-      const stage = loadProfile().story.treatmentStage;
-      if (stage && stage !== "bracing" && stage !== "pre_op" && stage !== "post_op") {
-        return goStep(8);
-      }
-    }
-    goStep(n + 1);
-  };
+  const next = () => goStep(n + 1);
 
   const skip = () => next();
 
@@ -67,12 +56,10 @@ function StepPage() {
     case 3: return <StepBody onNext={next} onSkip={skip} />;
     case 4: return <StepStory onNext={next} onSkip={skip} />;
     case 5: return <StepCurve onNext={next} onSkip={skip} />;
-    case 6: return <StepMaturity onNext={next} onSkip={skip} />;
-    case 7: return <StepBrace onNext={next} onSkip={skip} />;
-    case 8: return <StepPt onNext={next} onSkip={skip} />;
-    case 9: return <StepSymptoms onNext={next} onSkip={skip} />;
-    case 10: return <StepGoals onNext={next} />;
-    case 11: return <StepCompanion onNext={() => goStep(DONE_STEP)} />;
+    case 6: return <StepBrace onNext={next} onSkip={skip} />;
+    case 7: return <StepPt onNext={next} onSkip={skip} />;
+    case 8: return <StepSymptoms onNext={next} onSkip={skip} />;
+    case 9: return <StepGoals onNext={() => goStep(DONE_STEP)} />;
     case DONE_STEP: return <Complete />;
     default: return null;
   }
