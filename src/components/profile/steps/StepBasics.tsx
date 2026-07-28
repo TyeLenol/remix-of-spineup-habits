@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { ProfileShell, Field, TextInput, ChipGroup } from "../ProfileShell";
-import { loadProfile, updateProfile, type Sex } from "@/lib/profile-store";
+import { loadProfile, updateProfile, type Sex, type TreatmentStage } from "@/lib/profile-store";
 
 export function StepBasics({ onNext }: { onNext: () => void }) {
-  const initial = loadProfile().basics;
-  const [name, setName] = useState(initial.displayName);
-  const [dob, setDob] = useState(initial.dob);
-  const [sex, setSex] = useState<Sex>(initial.sex);
+  const profile = loadProfile();
+  const [name, setName] = useState(profile.basics.displayName);
+  const [dob, setDob] = useState(profile.basics.dob);
+  const [sex, setSex] = useState<Sex>(profile.basics.sex);
+  const [stage, setStage] = useState<TreatmentStage | undefined>(profile.story.treatmentStage);
 
-  const canContinue = name.trim().length > 0 && dob.length > 0;
+  const canContinue = name.trim().length > 0 && dob.length > 0 && !!stage;
 
   const save = () => {
-    updateProfile((p) => ({ ...p, basics: { displayName: name.trim(), dob, sex } }));
+    updateProfile((p) => ({
+      ...p,
+      basics: { displayName: name.trim(), dob, sex },
+      story: { ...p.story, treatmentStage: stage },
+    }));
     onNext();
   };
 
@@ -20,7 +25,7 @@ export function StepBasics({ onNext }: { onNext: () => void }) {
       step={2}
       composition="screen2"
       title="Nice to meet you."
-      explainer="Just the essentials. We use your age to tailor content — sex-at-birth is optional and affects progression-risk insights only if you share it."
+      explainer="Just the essentials so Spry can tailor your journey. Sex-at-birth is optional — it only affects progression-risk insights."
       primary={{ label: "Continue", onClick: save, disabled: !canContinue }}
     >
       <Field label="What should Spry call you?">
@@ -53,6 +58,22 @@ export function StepBasics({ onNext }: { onNext: () => void }) {
             { value: "male", label: "Male" },
             { value: "intersex", label: "Intersex" },
             { value: "prefer_not", label: "Prefer not to say" },
+          ]}
+        />
+      </Field>
+
+      <Field label="Where are you in your journey?" hint="Shapes what Spry cheers you on for. You can change this any time.">
+        <ChipGroup<TreatmentStage>
+          columns={1}
+          value={stage}
+          onChange={setStage}
+          options={[
+            { value: "observation", label: "Being monitored", hint: "Watch-and-wait, no brace yet" },
+            { value: "bracing", label: "Wearing a brace" },
+            { value: "pre_op", label: "Preparing for surgery" },
+            { value: "post_op", label: "Recovering from surgery" },
+            { value: "adult", label: "Adult with scoliosis" },
+            { value: "unsure", label: "Not sure yet" },
           ]}
         />
       </Field>

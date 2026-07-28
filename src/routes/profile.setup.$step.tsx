@@ -4,12 +4,8 @@ import { Sparkles } from "lucide-react";
 import { TOTAL_STEPS, loadProfile } from "@/lib/profile-store";
 import { StepConsent } from "@/components/profile/steps/StepConsent";
 import { StepBasics } from "@/components/profile/steps/StepBasics";
-import { StepBody } from "@/components/profile/steps/StepBody";
-import { StepStory } from "@/components/profile/steps/StepStory";
 import { StepCurve } from "@/components/profile/steps/StepCurve";
-import { StepBrace } from "@/components/profile/steps/StepBrace";
-import { StepPt } from "@/components/profile/steps/StepPt";
-import { StepSymptoms } from "@/components/profile/steps/StepSymptoms";
+import { StepCare } from "@/components/profile/steps/StepCare";
 import { StepGoals } from "@/components/profile/steps/StepGoals";
 import { LivingBackground } from "@/components/onboarding/LivingBackground";
 import { Spry } from "@/components/onboarding/Spry";
@@ -53,13 +49,9 @@ function StepPage() {
   switch (n) {
     case 1: return <StepConsent onNext={next} />;
     case 2: return <StepBasics onNext={next} />;
-    case 3: return <StepBody onNext={next} onSkip={skip} />;
-    case 4: return <StepStory onNext={next} onSkip={skip} />;
-    case 5: return <StepCurve onNext={next} onSkip={skip} />;
-    case 6: return <StepBrace onNext={next} onSkip={skip} />;
-    case 7: return <StepPt onNext={next} onSkip={skip} />;
-    case 8: return <StepSymptoms onNext={next} onSkip={skip} />;
-    case 9: return <StepGoals onNext={() => goStep(DONE_STEP)} />;
+    case 3: return <StepCurve onNext={next} onSkip={skip} />;
+    case 4: return <StepCare onNext={next} onSkip={skip} />;
+    case 5: return <StepGoals onNext={() => goStep(DONE_STEP)} />;
     case DONE_STEP: return <Complete />;
     default: return null;
   }
