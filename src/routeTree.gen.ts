@@ -11,13 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TodayIndexRouteImport } from './routes/today.index'
 import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
 import { Route as ProfileSetupStepRouteImport } from './routes/profile.setup.$step'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const TodayRoute = TodayRouteImport.update({
   id: '/today',
@@ -27,6 +31,11 @@ const TodayRoute = TodayRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -54,6 +63,18 @@ const OnboardingStepRoute = OnboardingStepRouteImport.update({
   path: '/$step',
   getParentRoute: () => OnboardingRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfileSetupIndexRoute = ProfileSetupIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -64,36 +85,54 @@ const ProfileSetupStepRoute = ProfileSetupStepRouteImport.update({
   path: '/$step',
   getParentRoute: () => ProfileSetupRoute,
 } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
   '/today/': typeof TodayIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/today/check-in': typeof TodayCheckInRoute
   '/today': typeof TodayIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup': typeof ProfileSetupIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
   '/today/': typeof TodayIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
   '/profile/setup/': typeof ProfileSetupIndexRoute
 }
@@ -101,41 +140,57 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/mcp'
     | '/onboarding'
     | '/today'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
     | '/today/'
+    | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
     | '/profile/setup/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/mcp'
     | '/onboarding'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/onboarding/$step'
     | '/today/check-in'
     | '/today'
+    | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
     | '/profile/setup'
   id:
     | '__root__'
     | '/'
+    | '/mcp'
     | '/onboarding'
     | '/today'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
     | '/today/'
+    | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
     | '/profile/setup/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  McpRoute: typeof McpRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
   TodayRoute: typeof TodayRouteWithChildren
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ProfileSetupRoute: typeof ProfileSetupRouteWithChildren
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -189,6 +251,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingStepRouteImport
       parentRoute: typeof OnboardingRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile/setup/': {
       id: '/profile/setup/'
       path: '/'
@@ -202,6 +278,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile/setup/$step'
       preLoaderRoute: typeof ProfileSetupStepRouteImport
       parentRoute: typeof ProfileSetupRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -246,10 +329,25 @@ const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  McpRoute: McpRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
   TodayRoute: TodayRouteWithChildren,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ProfileSetupRoute: ProfileSetupRouteWithChildren,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
