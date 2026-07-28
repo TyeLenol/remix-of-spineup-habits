@@ -24,7 +24,7 @@ function radiusFor(shape: ShapeName, a: number): number {
     case "cluster": {
       // 5-lobe rosette: reads as a small group of connected people
       const lobes = 5;
-      const t = Math.cos(lobes * a - Math.PI / 2);
+      const t = Math.cos(lobes * (a + Math.PI / 2));
       const soft = Math.sign(t) * Math.pow(Math.abs(t), 0.85);
       return 0.86 + 0.2 * soft;
     }

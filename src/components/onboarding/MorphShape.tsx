@@ -129,7 +129,7 @@ function ClusterOverlay({ color }: { color: string }) {
 /** Privacy: an inner concentric shield and a short spine that settle inward. */
 function ShieldLayers({ color }: { color: string }) {
   const reduced = useReducedMotion();
-  const inner = morphPath(4, 100, 100, 50);
+  const inner = morphPath(4, 100, 96, 46);
   const settle = reduced
     ? { duration: 0.5, ease: "easeOut" as const }
     : { duration: 0.75, ease: [0.05, 0.7, 0.1, 1] as [number, number, number, number], delay: 0.15 };
@@ -147,7 +147,7 @@ function ShieldLayers({ color }: { color: string }) {
         transition={settle}
       />
       <motion.path
-        d="M 100 74 L 100 122"
+        d="M 100 70 L 100 116"
         stroke={color}
         strokeWidth={5}
         strokeLinecap="round"
@@ -155,12 +155,12 @@ function ShieldLayers({ color }: { color: string }) {
         animate={reduced ? { opacity: 1 } : { pathLength: 1, opacity: 1 }}
         transition={reduced ? { duration: 0.5 } : { duration: 0.6, delay: 0.45, ease: [0.05, 0.7, 0.1, 1] }}
       />
-      {[86, 100, 114].map((y, i) => (
+      {[80, 93, 106].map((y, i) => (
         <motion.circle
           key={y}
           cx={100}
           cy={y}
-          r={4}
+          r={4.5}
           fill={color}
           initial={reduced ? { opacity: 0 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
