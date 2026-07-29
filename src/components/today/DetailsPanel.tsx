@@ -27,17 +27,17 @@ export function DetailsPanel({
 
   return (
     <section aria-labelledby="details-heading" className="pb-2">
-      <h2 id="details-heading" className="sr-only">
-        Today's details
-      </h2>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={panelId}
+        aria-labelledby="details-heading"
         className="flex min-h-14 w-full items-center justify-between rounded-[24px] border border-outline-variant px-5 text-warm-ink outline-offset-2 focus-visible:outline-3 focus-visible:outline-sage-ink"
       >
-        <span className="font-semibold">Today's details</span>
+        <span id="details-heading" className="font-semibold">
+          Today's details
+        </span>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 26 }}
