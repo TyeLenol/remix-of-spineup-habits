@@ -107,43 +107,7 @@ function CheckInPage() {
         <Card>
           <fieldset>
             <legend className="font-serif text-lg font-black text-warm-ink">Mood</legend>
-            <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Mood">
-              {MOODS.map((m) => {
-                const on = mood === m.id;
-                return (
-                  <motion.button
-                    key={m.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    onClick={() => setMood(m.id)}
-                    whileTap={reduced ? undefined : { scale: 0.92, borderRadius: 14 }}
-                    transition={{ type: "spring", stiffness: 600, damping: 20 }}
-                    className={`flex min-h-12 flex-1 flex-col items-center justify-center rounded-2xl border px-2 py-2 text-xs font-semibold outline-offset-2 focus-visible:outline-3 focus-visible:outline-sage-ink ${
-                      on
-                        ? "border-sage-ink bg-sage-container text-on-sage"
-                        : "border-outline-variant text-warm-ink"
-                    }`}
-                  >
-                    <span aria-hidden className="mb-1 flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <span
-                          key={n}
-                          className={`block h-1.5 w-1.5 rounded-full ${
-                            n <= m.score
-                              ? on
-                                ? "bg-sage-ink"
-                                : "bg-warm-ink/45"
-                              : "bg-warm-ink/12"
-                          }`}
-                        />
-                      ))}
-                    </span>
-                    {m.label}
-                  </motion.button>
-                );
-              })}
-            </div>
+            <MoodGroup value={mood} onChange={setMood} />
           </fieldset>
         </Card>
 
