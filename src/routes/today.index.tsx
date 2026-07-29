@@ -102,19 +102,19 @@ function TodayPage() {
       </motion.div>
 
       <motion.div {...rise(2)}>
-        <CheckInCard checkIn={t.checkIn} />
-      </motion.div>
-
-      <motion.div {...rise(3)} className="mt-2">
-        <ExerciseList done={t.doneToday} onToggle={t.toggleExercise} />
-      </motion.div>
-
-      <motion.div {...rise(4)} className="mt-2">
         <DetailsPanel
           completedToday={t.doneToday.length}
           streak={t.streak}
           appointment={t.state.appointment}
         />
+      </motion.div>
+
+      <motion.div {...rise(3)}>
+        <CheckInCard checkIn={t.checkIn} />
+      </motion.div>
+
+      <motion.div {...rise(4)} className="mt-2">
+        <ExerciseList done={t.doneToday} onToggle={t.toggleExercise} />
       </motion.div>
     </main>
   );

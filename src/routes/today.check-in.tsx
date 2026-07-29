@@ -107,43 +107,7 @@ function CheckInPage() {
         <Card>
           <fieldset>
             <legend className="font-serif text-lg font-black text-warm-ink">Mood</legend>
-            <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Mood">
-              {MOODS.map((m) => {
-                const on = mood === m.id;
-                return (
-                  <motion.button
-                    key={m.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    onClick={() => setMood(m.id)}
-                    whileTap={reduced ? undefined : { scale: 0.92, borderRadius: 14 }}
-                    transition={{ type: "spring", stiffness: 600, damping: 20 }}
-                    className={`flex min-h-12 flex-1 flex-col items-center justify-center rounded-2xl border px-2 py-2 text-xs font-semibold outline-offset-2 focus-visible:outline-3 focus-visible:outline-sage-ink ${
-                      on
-                        ? "border-sage-ink bg-sage-container text-on-sage"
-                        : "border-outline-variant text-warm-ink"
-                    }`}
-                  >
-                    <span aria-hidden className="mb-1 flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <span
-                          key={n}
-                          className={`block h-1.5 w-1.5 rounded-full ${
-                            n <= m.score
-                              ? on
-                                ? "bg-sage-ink"
-                                : "bg-warm-ink/45"
-                              : "bg-warm-ink/12"
-                          }`}
-                        />
-                      ))}
-                    </span>
-                    {m.label}
-                  </motion.button>
-                );
-              })}
-            </div>
+            <MoodGroup value={mood} onChange={setMood} />
           </fieldset>
         </Card>
 
@@ -182,7 +146,13 @@ function CheckInPage() {
         </Card>
 
         <Card>
-          <Label htmlFor="fatigue">Fatigue</Label>
+          <div className="flex items-baseline justify-between">
+            <Label htmlFor="fatigue">Fatigue</Label>
+            <span className="font-serif text-2xl font-black tabular-nums text-warm-ink">
+              {fatigue}
+              <span className="text-sm font-semibold text-warm-ink-muted"> / 10</span>
+            </span>
+          </div>
           <input
             id="fatigue"
             type="range"
@@ -193,7 +163,13 @@ function CheckInPage() {
             aria-valuetext={`${fatigue} out of 10`}
             className="h-11 w-full accent-[var(--lavender-ink)]"
           />
-          <Label htmlFor="tightness">Muscle tightness</Label>
+          <div className="mt-3 flex items-baseline justify-between">
+            <Label htmlFor="tightness">Muscle tightness</Label>
+            <span className="font-serif text-2xl font-black tabular-nums text-warm-ink">
+              {tightness}
+              <span className="text-sm font-semibold text-warm-ink-muted"> / 10</span>
+            </span>
+          </div>
           <input
             id="tightness"
             type="range"
@@ -271,5 +247,76 @@ function Label({ htmlFor, children }: { htmlFor: string; children: React.ReactNo
     <label htmlFor={htmlFor} className="font-serif text-lg font-black text-warm-ink">
       {children}
     </label>
+  );
+}
+
+function MoodGroup({
+  value,
+  onChange,
+}: {
+  value: Mood;
+  onChange: (m: Mood) => void;
+}) {
+  const reduced = useReducedMotion();
+  const activeIndex = Math.max(
+    0,
+    MOODS.findIndex((m) => m.id === value),
+  );
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const count = MOODS.length;
+    let next = -1;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = (activeIndex + 1) % count;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = (activeIndex - 1 + count) % count;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = count - 1;
+    if (next < 0) return;
+    e.preventDefault();
+    onChange(MOODS[next].id);
+    requestAnimationFrame(() => {
+      const radios = (e.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>("[role=radio]");
+      radios[next]?.focus();
+    });
+  };
+
+  return (
+    <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Mood" onKeyDown={onKeyDown}>
+      {MOODS.map((m, i) => {
+        const on = value === m.id;
+        return (
+          <motion.button
+            key={m.id}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            tabIndex={i === activeIndex ? 0 : -1}
+            onClick={() => onChange(m.id)}
+            whileTap={reduced ? undefined : { scale: 0.92, borderRadius: 14 }}
+            transition={{ type: "spring", stiffness: 600, damping: 20 }}
+            className={`flex min-h-12 flex-1 flex-col items-center justify-center rounded-2xl border px-2 py-2 text-xs font-semibold outline-offset-2 focus-visible:outline-3 focus-visible:outline-sage-ink ${
+              on
+                ? "border-sage-ink bg-sage-container text-on-sage"
+                : "border-outline-variant text-warm-ink"
+            }`}
+          >
+            <span aria-hidden className="mb-1 flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span
+                  key={n}
+                  className={`block h-1.5 w-1.5 rounded-full ${
+                    n <= m.score
+                      ? on
+                        ? "bg-sage-ink"
+                        : "bg-warm-ink/45"
+                      : "bg-warm-ink/12"
+                  }`}
+                />
+              ))}
+            </span>
+            {m.label}
+          </motion.button>
+        );
+      })}
+    </div>
   );
 }
