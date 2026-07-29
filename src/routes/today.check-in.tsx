@@ -182,7 +182,13 @@ function CheckInPage() {
         </Card>
 
         <Card>
-          <Label htmlFor="fatigue">Fatigue</Label>
+          <div className="flex items-baseline justify-between">
+            <Label htmlFor="fatigue">Fatigue</Label>
+            <span className="font-serif text-2xl font-black tabular-nums text-warm-ink">
+              {fatigue}
+              <span className="text-sm font-semibold text-warm-ink-muted"> / 10</span>
+            </span>
+          </div>
           <input
             id="fatigue"
             type="range"
@@ -193,7 +199,13 @@ function CheckInPage() {
             aria-valuetext={`${fatigue} out of 10`}
             className="h-11 w-full accent-[var(--lavender-ink)]"
           />
-          <Label htmlFor="tightness">Muscle tightness</Label>
+          <div className="mt-3 flex items-baseline justify-between">
+            <Label htmlFor="tightness">Muscle tightness</Label>
+            <span className="font-serif text-2xl font-black tabular-nums text-warm-ink">
+              {tightness}
+              <span className="text-sm font-semibold text-warm-ink-muted"> / 10</span>
+            </span>
+          </div>
           <input
             id="tightness"
             type="range"
