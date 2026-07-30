@@ -81,9 +81,9 @@ export function ActivityLog({ entries }: { entries: ActivityEntry[] }) {
           this timeline.
         </p>
       ) : (
-        <ol className="relative mt-4 flex flex-col gap-3 pl-6">
+        <ol className="relative mt-4 flex flex-col gap-3 pl-10">
           <span
-            className="absolute left-[15px] top-2 bottom-2 w-[2px] rounded-full bg-outline-variant"
+            className="absolute left-[19px] top-2 bottom-2 w-[2px] rounded-full bg-outline-variant"
             aria-hidden
           />
           <AnimatePresence initial={false}>
@@ -107,7 +107,7 @@ export function ActivityLog({ entries }: { entries: ActivityEntry[] }) {
                 className="relative rounded-[24px] border border-outline-variant bg-warm-surface px-4 py-4"
               >
                 <span
-                  className={`absolute -left-6 top-4 grid h-8 w-8 place-items-center rounded-full ring-4 ring-warm-bg ${TONE[e.kind]}`}
+                  className={`absolute -left-9 top-4 grid h-8 w-8 place-items-center rounded-full ring-4 ring-warm-bg ${TONE[e.kind]}`}
                   aria-hidden
                 >
                   {ICON[e.kind]}
