@@ -12,11 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TodayIndexRouteImport } from './routes/today.index'
+import { Route as JourneyIndexRouteImport } from './routes/journey.index'
 import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
+import { Route as JourneyMeasurementRouteImport } from './routes/journey.measurement'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
@@ -38,6 +41,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JourneyRoute = JourneyRouteImport.update({
+  id: '/journey',
+  path: '/journey',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -47,6 +55,11 @@ const TodayIndexRoute = TodayIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TodayRoute,
+} as any)
+const JourneyIndexRoute = JourneyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JourneyRoute,
 } as any)
 const TodayCheckInRoute = TodayCheckInRouteImport.update({
   id: '/check-in',
@@ -62,6 +75,11 @@ const OnboardingStepRoute = OnboardingStepRouteImport.update({
   id: '/$step',
   path: '/$step',
   getParentRoute: () => OnboardingRoute,
+} as any)
+const JourneyMeasurementRoute = JourneyMeasurementRouteImport.update({
+  id: '/measurement',
+  path: '/measurement',
+  getParentRoute: () => JourneyRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -94,14 +112,17 @@ const Char91DotmcpChar93InvokeToolToolRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/journey': typeof JourneyRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey/': typeof JourneyIndexRoute
   '/today/': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -113,8 +134,10 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey': typeof JourneyIndexRoute
   '/today': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -123,14 +146,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/journey': typeof JourneyRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey/': typeof JourneyIndexRoute
   '/today/': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -140,14 +166,17 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/journey'
     | '/mcp'
     | '/onboarding'
     | '/today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
+    | '/journey/'
     | '/today/'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -159,8 +188,10 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/today/check-in'
+    | '/journey'
     | '/today'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -168,14 +199,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/journey'
     | '/mcp'
     | '/onboarding'
     | '/today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
+    | '/journey/'
     | '/today/'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -184,6 +218,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  JourneyRoute: typeof JourneyRouteWithChildren
   McpRoute: typeof McpRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
   TodayRoute: typeof TodayRouteWithChildren
@@ -216,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journey': {
+      id: '/journey'
+      path: '/journey'
+      fullPath: '/journey'
+      preLoaderRoute: typeof JourneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -229,6 +271,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/today/'
       preLoaderRoute: typeof TodayIndexRouteImport
       parentRoute: typeof TodayRoute
+    }
+    '/journey/': {
+      id: '/journey/'
+      path: '/'
+      fullPath: '/journey/'
+      preLoaderRoute: typeof JourneyIndexRouteImport
+      parentRoute: typeof JourneyRoute
     }
     '/today/check-in': {
       id: '/today/check-in'
@@ -250,6 +299,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/$step'
       preLoaderRoute: typeof OnboardingStepRouteImport
       parentRoute: typeof OnboardingRoute
+    }
+    '/journey/measurement': {
+      id: '/journey/measurement'
+      path: '/measurement'
+      fullPath: '/journey/measurement'
+      preLoaderRoute: typeof JourneyMeasurementRouteImport
+      parentRoute: typeof JourneyRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -288,6 +344,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface JourneyRouteChildren {
+  JourneyMeasurementRoute: typeof JourneyMeasurementRoute
+  JourneyIndexRoute: typeof JourneyIndexRoute
+}
+
+const JourneyRouteChildren: JourneyRouteChildren = {
+  JourneyMeasurementRoute: JourneyMeasurementRoute,
+  JourneyIndexRoute: JourneyIndexRoute,
+}
+
+const JourneyRouteWithChildren =
+  JourneyRoute._addFileChildren(JourneyRouteChildren)
 
 interface OnboardingRouteChildren {
   OnboardingStepRoute: typeof OnboardingStepRoute
@@ -329,6 +398,7 @@ const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  JourneyRoute: JourneyRouteWithChildren,
   McpRoute: McpRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
   TodayRoute: TodayRouteWithChildren,
