@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodayRouteImport } from './routes/today'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TodayIndexRouteImport } from './routes/today.index'
+import { Route as JourneyIndexRouteImport } from './routes/journey.index'
 import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
@@ -38,6 +40,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JourneyRoute = JourneyRouteImport.update({
+  id: '/journey',
+  path: '/journey',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -47,6 +54,11 @@ const TodayIndexRoute = TodayIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TodayRoute,
+} as any)
+const JourneyIndexRoute = JourneyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JourneyRoute,
 } as any)
 const TodayCheckInRoute = TodayCheckInRouteImport.update({
   id: '/check-in',
@@ -94,6 +106,7 @@ const Char91DotmcpChar93InvokeToolToolRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/journey': typeof JourneyRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
@@ -102,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey/': typeof JourneyIndexRoute
   '/today/': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -115,6 +129,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey': typeof JourneyIndexRoute
   '/today': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -123,6 +138,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/journey': typeof JourneyRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/today': typeof TodayRouteWithChildren
@@ -131,6 +147,7 @@ export interface FileRoutesById {
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
+  '/journey/': typeof JourneyIndexRoute
   '/today/': typeof TodayIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/setup/$step': typeof ProfileSetupStepRoute
@@ -140,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/journey'
     | '/mcp'
     | '/onboarding'
     | '/today'
@@ -148,6 +166,7 @@ export interface FileRouteTypes {
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
+    | '/journey/'
     | '/today/'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -161,6 +180,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/onboarding/$step'
     | '/today/check-in'
+    | '/journey'
     | '/today'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -168,6 +188,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/journey'
     | '/mcp'
     | '/onboarding'
     | '/today'
@@ -176,6 +197,7 @@ export interface FileRouteTypes {
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
+    | '/journey/'
     | '/today/'
     | '/.mcp/invoke-tool/$tool'
     | '/profile/setup/$step'
@@ -184,6 +206,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  JourneyRoute: typeof JourneyRouteWithChildren
   McpRoute: typeof McpRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
   TodayRoute: typeof TodayRouteWithChildren
@@ -216,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journey': {
+      id: '/journey'
+      path: '/journey'
+      fullPath: '/journey'
+      preLoaderRoute: typeof JourneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -229,6 +259,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/today/'
       preLoaderRoute: typeof TodayIndexRouteImport
       parentRoute: typeof TodayRoute
+    }
+    '/journey/': {
+      id: '/journey/'
+      path: '/'
+      fullPath: '/journey/'
+      preLoaderRoute: typeof JourneyIndexRouteImport
+      parentRoute: typeof JourneyRoute
     }
     '/today/check-in': {
       id: '/today/check-in'
@@ -289,6 +326,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface JourneyRouteChildren {
+  JourneyIndexRoute: typeof JourneyIndexRoute
+}
+
+const JourneyRouteChildren: JourneyRouteChildren = {
+  JourneyIndexRoute: JourneyIndexRoute,
+}
+
+const JourneyRouteWithChildren =
+  JourneyRoute._addFileChildren(JourneyRouteChildren)
+
 interface OnboardingRouteChildren {
   OnboardingStepRoute: typeof OnboardingStepRoute
 }
@@ -329,6 +377,7 @@ const ProfileSetupRouteWithChildren = ProfileSetupRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  JourneyRoute: JourneyRouteWithChildren,
   McpRoute: McpRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
   TodayRoute: TodayRouteWithChildren,
