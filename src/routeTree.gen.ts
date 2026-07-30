@@ -19,6 +19,7 @@ import { Route as JourneyIndexRouteImport } from './routes/journey.index'
 import { Route as TodayCheckInRouteImport } from './routes/today.check-in'
 import { Route as ProfileSetupRouteImport } from './routes/profile.setup'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding.$step'
+import { Route as JourneyMeasurementRouteImport } from './routes/journey.measurement'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ProfileSetupIndexRouteImport } from './routes/profile.setup.index'
@@ -75,6 +76,11 @@ const OnboardingStepRoute = OnboardingStepRouteImport.update({
   path: '/$step',
   getParentRoute: () => OnboardingRoute,
 } as any)
+const JourneyMeasurementRoute = JourneyMeasurementRouteImport.update({
+  id: '/measurement',
+  path: '/measurement',
+  getParentRoute: () => JourneyRoute,
+} as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/today': typeof TodayRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/today/check-in': typeof TodayCheckInRoute
   '/journey': typeof JourneyIndexRoute
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/today': typeof TodayRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/journey/measurement': typeof JourneyMeasurementRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/profile/setup': typeof ProfileSetupRouteWithChildren
   '/today/check-in': typeof TodayCheckInRoute
@@ -163,6 +172,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/today/check-in'
     | '/journey'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/today'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/journey/measurement'
     | '/onboarding/$step'
     | '/profile/setup'
     | '/today/check-in'
@@ -288,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingStepRouteImport
       parentRoute: typeof OnboardingRoute
     }
+    '/journey/measurement': {
+      id: '/journey/measurement'
+      path: '/measurement'
+      fullPath: '/journey/measurement'
+      preLoaderRoute: typeof JourneyMeasurementRouteImport
+      parentRoute: typeof JourneyRoute
+    }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
       path: '/.well-known/oauth-protected-resource'
@@ -327,10 +346,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface JourneyRouteChildren {
+  JourneyMeasurementRoute: typeof JourneyMeasurementRoute
   JourneyIndexRoute: typeof JourneyIndexRoute
 }
 
 const JourneyRouteChildren: JourneyRouteChildren = {
+  JourneyMeasurementRoute: JourneyMeasurementRoute,
   JourneyIndexRoute: JourneyIndexRoute,
 }
 
